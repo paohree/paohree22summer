@@ -8,20 +8,21 @@ typedef struct node_node{
     node_node *child[10];//일단 10개 두고 시작
 }node;
 
-void makeTrie(char alphabet, node *pointer){
+node *makeTrie(char alphabet, node *pointer){
     int check;
     int j;
     int copyPoint;
     for(int i=0;i<10;i++){//이미 알파벳을 가진 노드가 있을 경우
         if(pointer->child[i]!=NULL){
             if(pointer->child[i]->key==alphabet){
+                cout<<pointer->child[i]->key<<"해당하는 알파벳을 지칭하는 포인터 있음! 퍄퍄\n";
+                cout<<pointer->key;
                 pointer=pointer->child[i];
-                cout<<"해당하는 알파벳을 지칭하는 포인터 있음! 퍄퍄\n";
-                return;      
+                return pointer;      
             }
         }
-        cout<<"해당하는 알파벳을 지칭하는 포인터 없음 ㅇㅇ\n";
-    }//여기서 안넘어갔으면 해당 알파벳의 노드가 없다는 소리임
+    }//여기서 안넘어갔으면 해당 알파벳의 노드가 없다는 소리임 만들어서 넘겨줘야함
+    cout<<alphabet<<"해당하는 알파벳을 지칭하는 포인터 없음 ㅇㅇ\n";
     for(j=0;j<10;j++){
         if(pointer->child[j]==NULL){
             check=j;
@@ -30,7 +31,7 @@ void makeTrie(char alphabet, node *pointer){
     }
     node *new_node=new node;
     new_node->key=alphabet;
-    for(int i=0;i<10;i++){
+    for(int i=0;i<10;i++){//이건 데이타 넘겨주는거임
         new_node->data[i]=pointer->data[i];
         if(pointer->data[i]=='\0'){
             copyPoint=i;
@@ -39,8 +40,20 @@ void makeTrie(char alphabet, node *pointer){
     }
     new_node->data[copyPoint]=alphabet;
     new_node->data[copyPoint+1]='\0';
-    pointer->child[j]=new_node;
 
+    pointer->child[check]=new_node;
+    cout<<pointer->key;
+    pointer=pointer->child[check];
+    return pointer;
+}
+void showData(node *set){
+    for(int i=0;i<10;i++){
+        if(set->child[i]!=NULL){
+            set=set->child[i];
+            showData(set);
+        }
+    }
+    cout<<set->data<<"\n";
 }
 
 int main(void){
@@ -53,25 +66,25 @@ int main(void){
     int length;
     int i=0;
     while(1){
-        cout<<"단어를 입력하세요.\n취소하려면 1을 입력하세요.\n";
+        cout<<"단어를 입력하세요.\n취소하려면 1을 입력하세요. 출력은 2번\n";
         cin>>space;
         if(space[0]=='1'){
             cout<<"정지합니다";
             break;
+        }else if(space[0]=='2'){
+            set=head;
+            showData(set);
         }else{
-            for(int i=0;i<10;i++){
-                if(space[i]=='\0'){
-                    length=i-1;
-                    break;
-                }
-            }
             child->key=space[0];
             head->child[0]=child;
             set=head;
-            for(int i=0;i<length;i++){
+            while(space[i]!='\0'){
                 makeTrie(space[i],set);
+                i++;
             }
             cout<<"완료했습니다.\n";
         }
     }
 }
+
+//좀 쓰레기 코드인거같은데 정상작동하고있는거같지않음

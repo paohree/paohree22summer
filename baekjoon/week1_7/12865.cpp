@@ -19,6 +19,9 @@ class something{
     int getWeight(){
         return weight;
     }
+    void plusValue(int number){
+        this->value=this->value+number;
+    }
 };
 class bag{
     private:
@@ -45,17 +48,14 @@ class bag{
     }
 };
 void inorderPrint(something *things){//이거 고쳐야함
-    if(things->small==NULL){
-        if(things->big==NULL){
-            cout<<things->getWeight()<<"\n";
-        }else{
-            things=things->big;
-            inorderPrint(things);
-        }
-    }else{
-        things=things->small;
-        inorderPrint(things);
+    if(things){
+        inorderPrint(things->small);
+        cout<<things->getWeight()<<" "<<things->getValue()<<"\n";
+        inorderPrint(things->big);
     }
+}
+void findAns(something *things){
+
 }
 int main(void){
     int number=0;
@@ -76,25 +76,29 @@ int main(void){
         things[i]=new something;
         things[i]->SetValue(thingValue);
         things[i]->SetWeight(thingWeight);
+        head=things[0];
         if(i==0){
             head=things[0];
-            child=head;
-            parent=head;
         }else{
+            parent=head;
             child=things[i];
             while(1){
                 if(child->getWeight()>parent->getWeight()){
                     if(parent->big==NULL){
                         parent->big=child;
+                        child->plusValue(parent->getValue());
                         break;
                     }else{
+                        child->plusValue(parent->getValue());
                         parent=parent->big;
                     }
                 }else{
                     if(parent->small==NULL){
+                        child->plusValue(parent->getValue());
                         parent->small=child;
                         break;
                     }else{
+                        child->plusValue(parent->getValue());
                         parent=parent->small;
                     }
                 }
@@ -104,3 +108,8 @@ int main(void){
     }
     inorderPrint(head);
 }
+
+//이거 이렇게 하면 안될듯함
+//ㅇㅇ
+//맨 첫번째 입력값이 너무 중요해져버림
+//for문으로 여러번 돌리는게 답 구하기에는 더 적합할듯함

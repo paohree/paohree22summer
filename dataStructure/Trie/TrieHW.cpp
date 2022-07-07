@@ -50,8 +50,8 @@ void findWord(node *pointer, char wantuser[]){
 void setSearchNumber(node *pointer, string word,int searchNumber){
     if(pointer->data==word){
         pointer->searchNumber=searchNumber;
-        //cout<<"다음과 같이 검색횟수가 설정됨\n";
-        //cout<<pointer->key<<" "<<pointer->data<<" "<<pointer->searchNumber<<"\n";
+        cout<<"다음과 같이 검색횟수가 설정됨\n";
+        cout<<pointer->key<<" "<<pointer->data<<" "<<pointer->searchNumber<<"\n";
     }
 }
 node *MakeTrie(node *pointer,char alphabet){

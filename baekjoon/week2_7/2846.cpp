@@ -39,11 +39,17 @@ int main(void){
     set=head;
     for(int i=0;i<numberOfNode;i++){
         if(i==numberOfNode-1){
-            hills[j]->end=set->size;
-            hills[j]->setSize();
-            cout<<"언덕끝남 1 "<<hills[j]->size<<" \n";
-            index=0;
-            break;
+            if(index==1){
+                hills[j]->end=set->size;
+                hills[j]->setSize();
+                cout<<"언덕끝남 0 "<<hills[j]->size<<" \n";
+                index=0;
+                break;
+            }else if(index==0){
+                cout<<"언덕끝남 1 \n";
+                index=0;
+                break;
+            }
         }else if(set->size<set->pointer->size&&index==0){
             hills[j]=new hill;
             cout<<"언덕만듦\n";
@@ -58,10 +64,14 @@ int main(void){
             j++;
             index=0;
         }else{
-            cout<<"언덕아님 ㅇㅇ\n";
+            hills[j]->end=set->size;
+            hills[j]->setSize();
+            cout<<"언덕끝남 3 "<<hills[j]->size<<" \n";
+            index=0;
         }
         set=set->pointer;
     }
+    cout<<"어디가 문제라는거야\n";
     int numberOfhills=j+1;
     int big=-1;
     cout<<numberOfhills;
@@ -80,3 +90,5 @@ int main(void){
         cout<<"제일 높은 언덕의 높이는 "<<big<<"임\n";
     }
 }
+//나올 수 있는 경우의 수 다시 생각해봐야할듯 
+//세그폴트가 너무많이남 그게 무슨말이냐면 걍 한다는거임 생각없이

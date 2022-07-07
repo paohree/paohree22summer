@@ -1,4 +1,5 @@
 #include<iostream>
+#include<stdio.h>
 #include<fstream>
 #include<cstring>
 #include<queue>
@@ -26,7 +27,7 @@ struct box{
 priority_queue<box>pq;
 void inorder (node *pointer){
     if (pointer){
-        cout << pointer->data<<" "<<pointer->searchNumber<<"\n";
+        //cout << pointer->data<<" "<<pointer->searchNumber<<"\n";
         for(int i=0;pointer->child[i]!=NULL;i++){
             inorder(pointer->child[i]);
         }
@@ -49,8 +50,8 @@ void findWord(node *pointer, char wantuser[]){
 void setSearchNumber(node *pointer, string word,int searchNumber){
     if(pointer->data==word){
         pointer->searchNumber=searchNumber;
-        cout<<"다음과 같이 검색횟수가 설정됨\n";
-        cout<<pointer->key<<" "<<pointer->data<<" "<<pointer->searchNumber<<"\n";
+        //cout<<"다음과 같이 검색횟수가 설정됨\n";
+        //cout<<pointer->key<<" "<<pointer->data<<" "<<pointer->searchNumber<<"\n";
     }
 }
 node *MakeTrie(node *pointer,char alphabet){
@@ -58,7 +59,7 @@ node *MakeTrie(node *pointer,char alphabet){
     while(pointer->child[i]!=NULL){
         if(pointer->child[i]->key==alphabet){
             pointer=pointer->child[i];
-            cout<<"여기는 타고 들어간거임."<<pointer->key<<" "<<pointer->data<<"\n";
+            //cout<<"여기는 타고 들어간거임."<<pointer->key<<" "<<pointer->data<<"\n";
             return pointer;
         }else{
             i++;
@@ -68,7 +69,7 @@ node *MakeTrie(node *pointer,char alphabet){
     newChild->key=alphabet;
     newChild->data=pointer->data+alphabet;
     newChild->searchNumber=0;
-    cout<<"이거는 새로 만들어지는거임"<<newChild->key<<" "<<newChild->data<<" "<<newChild->searchNumber<<"\n";
+    //cout<<"이거는 새로 만들어지는거임"<<newChild->key<<" "<<newChild->data<<" "<<newChild->searchNumber<<"\n";
     for(i=0;;i++){
         if(pointer->child[i]==NULL){
             pointer->child[i]=newChild;
@@ -92,11 +93,11 @@ int main(void){
         while(getline(file,sentence,'\t')){
             file>>searchNumber;
             set=head;
-            cout<<sentence<<"\n";
+            //cout<<sentence<<"\n";
             space=sentence.length();
-            cout<<space<<"\n";
+            //cout<<space<<"\n";
             int j=0;
-            cout<<searchNumber<<"\n";
+            //cout<<searchNumber<<"\n";
             for(int i=0;i<space;i++){
                 set=MakeTrie(set,sentence.at(i));
                 setSearchNumber(set,sentence,searchNumber);
@@ -105,31 +106,73 @@ int main(void){
         }
         file.close();//ㅇㅋ 확인함 퍄퍄!
     }
-    cout<<"트래버설 확인\n";
-    inorder(head);
-    cout<<"트래버설 끝\n";
-    string userWant;
-    char wantUser[100];
+    //cout<<"트래버설 확인\n";
+    //inorder(head);
+    //cout<<"트래버설 끝\n";
+    char userWant[100]={0};
+    char c;
+    int y;
+    //printf("\x1b[%dA",10);
+    printf("\n\n\n\n\n\n\n\n\n\n");
+    printf("\x1b[%dA",10);
     while(1){
-        printf("\n검색어를 입력하세요. (정지는 quit)\n");
-        printf("%s  ||==========================||\n",green);
-        printf("%s  ||                          ||\n",green);
-        printf("%s  ||==========================||\n",green);
+        printf("\n");
+        printf("%s==========================정지는 esc\n",green);
         printf("%s",normal);
         printf("\x1b[%dA",2);
-        printf("\x1b[%dC",7);
-        getline(cin,userWant);
-        printf("\x1b[%dB",4);
-        if(userWant=="quit"){
+        system("stty raw");
+        c=getchar();
+        if(c==27){
+            system("stty cooked");//system from 아는 형
             cout<<"장비를 정지합니다.\n";
-            break;
+            exit(0);
+        }else{
+            system("stty cooked");
         }
-        strcpy(wantUser,userWant.c_str());
-        findWord(head,wantUser);
-        while(!pq.empty()){
-            box b=pq.top();
-            pq.pop();
-            cout<<b.data<<" "<<b.searchNumber<<"\n";
+        printf("\x1b[%dB",2);
+        for(int i=0;i<10;i++){
+            printf("                                    \n");//이게 콘솔창 지우는거임
+        }
+        printf("\x1b[%dA",12);
+        if(c==9){
+            for(y=0;y<100;y++){
+                printf("                              ");
+                printf("\x1b[%dD",30);
+                if(userWant[y]==0){
+                    userWant[y-1]=0;
+                    break;
+                }
+            }
+        }else{
+            for(y=0;y<100;y++){
+                if(userWant[y]==0){
+                    userWant[y]=c;
+                    break;
+                }
+            }
+        }
+        for(int i=0;i<100;i++){
+            if(userWant[i]=='0'){
+                break;
+            }else{
+                cout<<userWant[i];
+            }
+        }
+        int k=2;
+        int index=0;
+        if(userWant[0]==0){
+            continue;
+        }else{
+            findWord(head,userWant);
+            printf("\x1b[%dB",2);
+            printf("\x1b[%dD",y+1); 
+            while(!pq.empty()){
+                box b=pq.top();
+                pq.pop();
+                k++;
+                cout<<b.data<<" "<<b.searchNumber<<"\n";
+            }
+            printf("\x1b[%dA",k);
         }
     }
 }//c++ 문법을 아직 잘 모르는거같음 책하나살까? 몰루겠다 일단 구글에서 알아야할듯

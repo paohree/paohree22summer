@@ -6,6 +6,18 @@ class node{
     int color;//0은 black, 1은 red
     node *left, *right;
 };
+void traversal(node *pointer){
+    if(pointer!=NULL){
+        cout<<"숫자는 "<<pointer->number;
+        if(pointer->color==0){
+            cout<<" 색깔은 black\n";
+        }else{
+            cout<<" 색깔은 red\n";
+        }
+        traversal(pointer->left);
+        traversal(pointer->right);
+    }
+}
 node *restructing(node *grandGrand,node *head, node *child, node* grand, node* parent, node* uncle){//삼촌있는버전
     grand->left=NULL;
     grand->right=NULL;
@@ -15,9 +27,6 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
     grand->right=NULL;
     if(grand->number>parent->number){
         if(parent->number>child->number){//             그랜드 패런트 차일드
-            if(grand==head){
-                head=parent;
-            }
             if(grand==grandGrand->left){
                 grandGrand->left=parent;
             }else if(grand==grandGrand->right){
@@ -29,13 +38,13 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
             parent->left->color=1;
             parent->right->color=1;
             parent->right->right=uncle;
+            if(grand==head){
+               head=parent;
+                return head;
+            }
             return grandGrand;
-            
         }else{
             if(grand->number>child->number){//          그랜트 차일드 패런트
-                if(grand==head){
-                    head=child;
-                }
                 if(grand==grandGrand->left){
                     grandGrand->left=child;
                 }else if(grand==grandGrand->right){
@@ -47,6 +56,10 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 child->left->color=1;
                 child->right->color=1;
                 child->right->right=uncle;
+                if(grand==head){
+                   head=child;
+                    return head;
+                }
                 return grandGrand;
             }else{//                                    차일드 그랜드 패런트
                 grand->left=parent;
@@ -55,6 +68,10 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 grand->left->color=1;
                 grand->right->color=1;
                 grand->right->right=uncle;
+                if(grand==head){
+                   head=grand;
+                    return head;
+                }
                 return grandGrand;
             }
         }
@@ -66,12 +83,13 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 grand->left->color=1;
                 grand->right->color=1;
                 grand->right->right=uncle;
+                if(grand==head){
+                   head=grand;
+                    return head;
+                }
                 return grandGrand;
         }else{
             if(parent->number>child->number){//     패런트 차일드 그랜드
-                if(grand==head){
-                    head=child;
-                }
                 if(grand==grandGrand->left){
                     grandGrand->left=child;
                 }else if(grand==grandGrand->right){
@@ -83,11 +101,12 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 child->left->color=1;
                 child->right->color=1;
                 child->right->right=uncle;
+                if(grand==head){
+                    head=child;
+                    return head;
+                }
                 return grandGrand;
             }else{//                                차일드 패런트 그랜드
-                if(grand==head){
-                    head=parent;
-                }
                 if(grand==grandGrand->left){
                     grandGrand->left=parent;
                 }else if(grand==grandGrand->right){
@@ -99,6 +118,10 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 parent->left->color=1;
                 parent->right->color=1;
                 parent->right->right=uncle;
+                if(grand==head){
+                    head=parent;
+                    return head;
+                }
                 return grandGrand;
             }
         }   
@@ -114,9 +137,6 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
     grand->right=NULL;
     if(grand->number>parent->number){
         if(parent->number>child->number){//             그랜드 패런트 차일드
-            if(grand==head){
-                head=parent;
-            }
             if(grand==grandGrand->left){
                 grandGrand->left=parent;
             }else if(grand==grandGrand->right){
@@ -127,23 +147,28 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
             parent->color=0;
             parent->left->color=1;
             parent->right->color=1;
+            if(grand==head){
+                head=parent;
+                return head;
+            }
             return grandGrand;
         }else{
             if(grand->number>child->number){//          그랜트 차일드 패런트
-                if(grand==head){
-                    head=child;
-                }
                 if(grand==grandGrand->left){
                     grandGrand->left=child;
                 }else if(grand==grandGrand->right){
                     grandGrand->right=child;
                 }
-                cout<<"여기 맞지?\n";
+                //cout<<"여기 맞지?\n";
                 child->left=parent;
                 child->right=grand;
                 child->color=0;
                 child->left->color=1;
                 child->right->color=1;
+                if(grand==head){
+                    head=child;
+                    return head;
+                }
                 return grandGrand;
             }else{//                                    차일드 그랜드 패런트
                 grand->left=parent;
@@ -151,6 +176,10 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 grand->color=0;
                 grand->left->color=1;
                 grand->right->color=1;
+                if(grand==head){
+                    head=grand;
+                    return head;
+                }
                 return grandGrand;
             }
         }
@@ -161,12 +190,13 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 grand->color=0;
                 grand->left->color=1;
                 grand->right->color=1;
+                if(grand==head){
+                    head=grand;
+                    return head;
+                }
                 return grandGrand;
         }else{
             if(parent->number>child->number){//     패런트 차일드 그랜드
-                if(grand==head){
-                    head=child;
-                }
                 if(grand==grandGrand->left){
                     grandGrand->left=child;
                 }else if(grand==grandGrand->right){
@@ -177,11 +207,13 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 child->color=0;
                 child->left->color=1;
                 child->right->color=1;
+                if(grand==head){
+                    head=child;
+                    return head;
+                }
                 return grandGrand;
             }else{//                                차일드 패런트 그랜드
-                if(grand==head){
-                    head=parent;
-                }
+                //cout<<"이경우임?\n";
                 if(grand==grandGrand->left){
                     grandGrand->left=parent;
                 }else if(grand==grandGrand->right){
@@ -192,6 +224,10 @@ node *restructing(node *grandGrand,node *head, node *child, node* grand, node* p
                 parent->color=0;
                 parent->left->color=1;
                 parent->right->color=1;
+                if(grand==head){
+                    head=parent;
+                    return head;
+                }
                 return grandGrand;
             }
         }   
@@ -206,18 +242,7 @@ void recoloring(node *head, node *child, node* grand, node* parent, node* uncle)
         grand->color=0;
     }
 }
-void traversal(node *pointer){
-    if(pointer!=NULL){
-        traversal(pointer->left);
-        cout<<"숫자는 "<<pointer->number;
-        if(pointer->color==0){
-            cout<<" 색깔은 black\n";
-        }else{
-            cout<<" 색깔은 red\n";
-        }
-        traversal(pointer->right);
-    }
-}
+
 int main(void){
     int number;
     node *nodes=NULL;
@@ -259,7 +284,11 @@ int main(void){
                         if(parent->color==child->color){
                             if(uncle==NULL){
                                 cout<<"restrucing임(no삼촌)\n";
-                                grandGrand=restructing(grandGrand,head, child,grand,parent);
+                                if(grandGrand==head){
+                                    head=restructing(grandGrand,head, child,grand,parent);
+                                }else{
+                                    grandGrand=restructing(grandGrand,head, child,grand,parent);
+                                }
                             }else{
                                 if(uncle->color==0){
                                     cout<<"restrucing임(yes삼촌)\n";
@@ -289,7 +318,11 @@ int main(void){
                         if(parent->color==child->color){
                             if(uncle==NULL){
                                 cout<<"restrucing임(no삼촌)\n";
-                                grandGrand=restructing(grandGrand,head, child,grand,parent);
+                                if(grandGrand==head){
+                                    head=restructing(grandGrand,head, child,grand,parent);
+                                }else{
+                                    grandGrand=restructing(grandGrand,head, child,grand,parent);
+                                }
                             }else{
                                 if(uncle->color==0){
                                     cout<<"restrucing임(yes삼촌)\n";

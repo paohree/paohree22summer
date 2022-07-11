@@ -22,9 +22,9 @@ int main(void){
     int j=0;
     cout<<"노드 갯수는?\n";
     cin>>numberOfNodes;
+    cout<<"size는? \n";
     for(int i=0;i<numberOfNodes;i++){
         nodes[i]=new node;
-        cout<<"size는? \n";
         cin>>size;
         nodes[i]->size=size;
         if(i!=0){
@@ -52,17 +52,27 @@ int main(void){
                 index=1;
             }else if(nodes[i]->size<nodes[i]->pointer->size&&index==1){
                 cout<<"언덕 중간\n";
-            }else if(nodes[i]->size>=nodes[i]->pointer->size){
+            }else if(nodes[i]->size>=nodes[i]->pointer->size&&index==1){
                 hills[j]->end=nodes[i]->size;
                 hills[j]->setHeight();
                 cout<<"언덕 끝\n";
                 index=0;
                 j++;
+            }else if(nodes[i]->size>=nodes[i]->pointer->size&&index==0){
+                cout<<"그냥 내리막임\n";
             }
         }
     }
-    cout<<j;
-    for(int i=0;i<j;i++){
-        cout<<hills[j]->height<<"\n";
+    int numberOfHills=0;
+    numberOfHills=j;
+    j=0;
+    if(numberOfHills==0){
+        cout<<"0\n";
+        
+    }else{
+        while(hills[j]!=NULL){
+            cout<<hills[j]->height<<" \n";
+            j++;
+        }
     }
 }

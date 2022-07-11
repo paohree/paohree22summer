@@ -9,86 +9,60 @@ class hill{
     public:
     int start;
     int end;
-    int size;
-    void setSize(){
-        size=end-start;
+    int height;
+    void setHeight(){
+        height=end-start;
     }
 };
 int main(void){
-    int numberOfNode;
+    int numberOfNodes;
     int size;
-    node *nodes[1000];
-    node *head;
-    node *set;
-    hill *hills[1000];
+    node *nodes[10000];
+    hill *hills[10000];
     int j=0;
-    cout<<"갯수는?\n";
-    cin>>numberOfNode;
-    for(int i=0;i<numberOfNode;i++){
+    cout<<"노드 갯수는?\n";
+    cin>>numberOfNodes;
+    for(int i=0;i<numberOfNodes;i++){
         nodes[i]=new node;
-        cin>>nodes[i]->size;
-        if(i==0){
-            head=nodes[i];
-            set=head;
-        }else{
-            set->pointer=nodes[i];
-            set=set->pointer;
+        cout<<"size는? \n";
+        cin>>size;
+        nodes[i]->size=size;
+        if(i!=0){
+            nodes[i-1]->pointer=nodes[i];
         }
     }
-    int index=0;
-    set=head;
-    for(int i=0;i<numberOfNode;i++){
-        if(i==numberOfNode-1){
-            if(index==1){
-                hills[j]->end=set->size;
-                hills[j]->setSize();
-                cout<<"언덕끝남 0 "<<hills[j]->size<<" \n";
-                index=0;
+    int index=0;//0은 언덕 없음 1은 언덕 중
+    for(int i=0;i<numberOfNodes;i++){
+        if(i==numberOfNodes-1){
+            if(index==0){
+                cout<<"프로그램 끝\n";
+                j++;
                 break;
-            }else if(index==0){
-                cout<<"언덕끝남 1 \n";
-                index=0;
-                break;
+            }else if(index==1){
+                hills[j]->end=nodes[i]->size;
+                hills[j]->setHeight();
+                cout<<"언덕 끝내고 프로그램 끝\n";
+                j++;
             }
-        }else if(set->size<set->pointer->size&&index==0){
-            hills[j]=new hill;
-            cout<<"언덕만듦\n";
-            index=1;
-            hills[j]->start=set->size;
-        }else if(set->size<set->pointer->size&&index==1){
-            cout<<"언덕이어짐\n";
-        }else if(set->size>set->pointer->size&&hills[j]!=NULL){
-            hills[j]->end=set->size;
-            hills[j]->setSize();
-            cout<<"언덕끝남 2 "<<hills[j]->size<<" \n";
-            j++;
-            index=0;
         }else{
-            hills[j]->end=set->size;
-            hills[j]->setSize();
-            cout<<"언덕끝남 3 "<<hills[j]->size<<" \n";
-            index=0;
-        }
-        set=set->pointer;
-    }
-    cout<<"어디가 문제라는거야\n";
-    int numberOfhills=j+1;
-    int big=-1;
-    cout<<numberOfhills;
-    for(j=0;j<numberOfhills;j++){
-        if(j==0){
-            big=hills[j]->size;
-        }else{
-            if(big<hills[j]->size){
-                big=hills[j]->size;
+            if(nodes[i]->size<nodes[i]->pointer->size&&index==0){
+                hills[j]=new hill;
+                hills[j]->start=nodes[i]->size;
+                cout<<"언덕 시작\n";
+                index=1;
+            }else if(nodes[i]->size<nodes[i]->pointer->size&&index==1){
+                cout<<"언덕 중간\n";
+            }else if(nodes[i]->size>=nodes[i]->pointer->size){
+                hills[j]->end=nodes[i]->size;
+                hills[j]->setHeight();
+                cout<<"언덕 끝\n";
+                index=0;
+                j++;
             }
         }
     }
-    if(big==-1){
-        cout<<"언덕없는데요\n";
-    }else{
-        cout<<"제일 높은 언덕의 높이는 "<<big<<"임\n";
+    cout<<j;
+    for(int i=0;i<j;i++){
+        cout<<hills[j]->height<<"\n";
     }
 }
-//나올 수 있는 경우의 수 다시 생각해봐야할듯 
-//세그폴트가 너무많이남 그게 무슨말이냐면 걍 한다는거임 생각없이

@@ -102,13 +102,26 @@ class node{
                 if(uncle==NULL||uncle!=NULL&&uncle->color==0){
                     //여기는 restructing임
                     if(uncle!=NULL){
-
+                        if(grand==head){
+                            restructing(grand, parent, kid);
+                            head=grand;
+                        }else{
+                            restructing(grand, parent, kid);
+                        }
                     }else{
-
+                        if(grand==head){
+                            restructing(grand, parent, kid);
+                            head=grand;
+                        }else{
+                            restructing(grand, parent, kid);
+                        }
                     }
                 }else if(uncle!=NULL&&uncle->color==1){
                     //여기는 recoloring임
-
+                    recoloring(grand, parent, uncle, kid);
+                    if(grand==head){
+                        grand->color=0;
+                    }
                 }else{
                     cout<<"이 경우는 나올 수 없음. 보기좋으라고 채워놓음.\n";
                 }
@@ -227,12 +240,146 @@ class node{
         }
     }
     void restructing(node *grand, node *parent, node *kid, node* uncle){
-        
+        node *backup;
+        if(grand->parent!=NULL){//조상의 부모 노드 있으면 저장해놓음
+            if(grand->parent->left==grand){
+                backup=grand->parent->left;
+            }else if(grand->parent->right==grand){
+                backup=grand->parent->right;
+            }
+        }
+        //일단 관계 다 끊음 조상의 부모 포인터는 저장해뒀으니까 마지막에 붙여주면 됨
+        grand->parent=NULL;
+        if(uncle==grand->left){
+            grand->right=NULL;
+        }else if(uncle==grand->right){
+            grand->left=NULL;
+        }
+        parent->parent=NULL;
+        parent->right=NULL;
+        parent->left=NULL;
+        kid->parent=NULL;
+        kid->right=NULL;
+        kid->left=NULL;
+        //관계 정리했으니까 이제 순서대로 세우고 다시 연결해주면 됨
+        //사실 grand는 중간에 갈 수 없음 그 경우 나오면 안됨
+        if(grand->data>parent->data){
+            if(parent->data>kid->data){//작은순대로 kid parent grand
+                parent->left=kid;
+                kid->parent=parent;
+                parent->right=grand;
+                grand->parent=parent;
+                parent->parent=backup;//이렇게해도 되지않나?
+            }else{
+                if(grand->data>kid->data){//parent kid grand
+                    kid->left=parent;
+                    kid->right=grand;
+                    parent->parent=kid;
+                    grand->parent=kid;
+                    kid->parent=backup;
+                }else{//parent grand kid
+                    grand->left=parent;
+                    grand->right=kid;
+                    parent->parent=grand;
+                    kid->parent=grand;
+                    grand->parent=backup;
+                }
+            }
+        }else{
+            if(parent->data<kid->data){//grand parent kid
+                parent->left=grand;
+                parent->right=kid;
+                grand->parent=parent;
+                kid->parent=parent;
+                parent->parent=backup;
+            }else{
+                if(kid->data>grand->data){//grand kid parent
+                    kid->left=grand;
+                    kid->right=parent;
+                    grand->parent=kid;
+                    parent->parent=kid;
+                    kid->parent=backup;
+                }else{//kid grand parent
+                    grand->left=kid;
+                    grand->right=parent;
+                    kid->parent=grand;
+                    parent->parent=grand;
+                    grand->parent=backup;
+                }
+            }
+        }
     }
     void restructing(node *grand, node *parent, node *kid){
-
+        node *backup;
+        if(grand->parent!=NULL){//조상의 부모 노드 있으면 저장해놓음
+            if(grand->parent->left==grand){
+                backup=grand->parent->left;
+            }else if(grand->parent->right==grand){
+                backup=grand->parent->right;
+            }
+        }
+        //일단 관계 다 끊음 조상의 부모 포인터는 저장해뒀으니까 마지막에 붙여주면 됨
+        grand->parent=NULL;
+        grand->left==NULL;
+        grand->right=NULL;
+        parent->parent=NULL;
+        parent->right==NULL;
+        parent->left=NULL;
+        kid->parent=NULL;
+        kid->right=NULL;
+        kid->left=NULL;
+        //관계 정리했으니까 이제 순서대로 세우고 다시 연결해주면 됨
+        //사실 grand는 중간에 갈 수 없음 그 경우 나오면 안됨
+        if(grand->data>parent->data){
+            if(parent->data>kid->data){//작은순대로 kid parent grand
+                parent->left=kid;
+                kid->parent=parent;
+                parent->right=grand;
+                grand->parent=parent;
+                parent->parent=backup;//이렇게해도 되지않나?
+            }else{
+                if(grand->data>kid->data){//parent kid grand
+                    kid->left=parent;
+                    kid->right=grand;
+                    parent->parent=kid;
+                    grand->parent=kid;
+                    kid->parent=backup;
+                }else{//parent grand kid
+                    grand->left=parent;
+                    grand->right=kid;
+                    parent->parent=grand;
+                    kid->parent=grand;
+                    grand->parent=backup;
+                }
+            }
+        }else{
+            if(parent->data<kid->data){//grand parent kid
+                parent->left=grand;
+                parent->right=kid;
+                grand->parent=parent;
+                kid->parent=parent;
+                parent->parent=backup;
+            }else{
+                if(kid->data>grand->data){//grand kid parent
+                    kid->left=grand;
+                    kid->right=parent;
+                    grand->parent=kid;
+                    parent->parent=kid;
+                    kid->parent=backup;
+                }else{//kid grand parent
+                    grand->left=kid;
+                    grand->right=parent;
+                    kid->parent=grand;
+                    parent->parent=grand;
+                    grand->parent=backup;
+                }
+            }
+        }
     }
     void recoloring(node *grand, node *parent, node *uncle, node *kid){
-
+        grand->color=1;
+        kid->color=1;
+        uncle->color=0;
+        parent->color=0;
     }
 };

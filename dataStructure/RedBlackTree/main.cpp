@@ -9,8 +9,8 @@ int main(void){
     string userWant;
     while(1){
         cout<<"\n";
-        cout<<"1. 새 노드 저장 (new 입력)\n"<<"2. 노드 삭제 (delete 입력)\n"<<"3. 노드 찾기 (find 입력)\n";
-        cout<<"4. 전체 노드 출력 (print 입력)\n"<<"5. 정지 (stop 입력)\n\n"<<"무엇을 원하십니까?\n\n";
+        cout<<"1. 새 노드 저장 (new 또는 1 입력)\n"<<"2. 노드 삭제 (delete 또는 2 입력)\n"<<"3. 노드 찾기 (find 또는 3 입력)\n";
+        cout<<"4. 전체 노드 출력 (print 또는 4 입력)\n"<<"5. 정지 (stop 또는 5 입력)\n\n"<<"무엇을 원하십니까?\n\n";
         cin>>userWant;
             cout<<"\n";
         if(userWant=="new"||userWant=="1"){

@@ -57,6 +57,9 @@ class node{
         //색깔 미리 정해놓고 콜하도록 하자 생성시 무조건 빨강색
 
         //cout<<"test\n";
+
+        int check=0;
+
         node *find=head;
         node *uncle=NULL;
         node *parent=NULL;
@@ -122,20 +125,21 @@ class node{
                         if(uncle!=NULL){
                             if(grand==head){
                                 cout<<"여기까지 와서 삼촌있 재건축 조상이 헤드\n";
-                                restructing(grand, parent, kid,uncle);
+                                grand=restructing(grand, parent, kid,uncle);
                                 head=grand;
                             }else{
                                 cout<<"여기까지 와서 삼촌있 재건축 조상 노 헤드\n";
-                                restructing(grand, parent, kid,uncle);
+                                grand=restructing(grand, parent, kid,uncle);
                             }
                         }else{
                             if(grand==head){
                                 cout<<"여기까지 와서 삼촌없 재건축 조상 헤드\n";
-                                restructing(grand, parent, kid);
+                                grand=restructing(grand, parent, kid);
                                 head=grand;
                             }else{
                                 cout<<"여기까지 와서 삼촌없 재건축 조상 노 헤드\n";
-                                restructing(grand, parent, kid);
+                                grand=restructing(grand, parent, kid);
+                                inorderPrint(head);
                             }
                         }
                     }else if(uncle!=NULL&&uncle->getColor()==1){
@@ -156,6 +160,11 @@ class node{
                     }else{
                         cout<<"부모로 넘김\n";
                         newOne=newOne->parent;//부모로 넘김 ㅇㅇ
+                        check++;
+                        cout<<newOne->getColor()<<" "<<newOne->getData()<<"\n";
+                        if(check>10){
+                            return head;
+                        }
                     }
                 }
             }
@@ -271,15 +280,20 @@ class node{
         }
         return NULL;
     }
-    void restructing(node *grand, node *parent, node *kid, node* uncle){
-        node *backup;
+    node* restructing(node *grand, node *parent, node *kid, node* uncle){
+        node *backup=NULL;
+        int index;
         if(grand->parent!=NULL){//조상의 부모 노드 있으면 저장해놓음
             if(grand->parent->left==grand){
-                backup=grand->parent->left;
+                backup=grand->parent;
+                index=0;//0이면 left
             }else if(grand->parent->right==grand){
-                backup=grand->parent->right;
+                backup=grand->parent;
+                index=1;//0이면 right
             }
         }
+        cout<<"이게 지금 백업 내용임. ";
+        cout<<backup->getColor()<<" "<<backup->getData()<<"\n";
         //일단 관계 다 끊음 조상의 부모 포인터는 저장해뒀으니까 마지막에 붙여주면 됨
         grand->parent=NULL;
         if(uncle==grand->left){
@@ -304,7 +318,16 @@ class node{
                 kid->setColor(1);
                 grand->parent=parent;
                 grand->setColor(1);
-                parent->parent=backup;//이렇게해도 되지않나?
+                if(backup!=NULL){
+                    if(index==0){
+                        backup->left=parent;
+                        parent->parent=backup;
+                    }else{
+                        backup->right=parent;
+                        parent->parent=backup;
+                    }
+                }
+                return parent;
             }else{
                 if(grand->data>kid->data){//parent kid grand
                     cout<<"패런트 키드 그랜드 순임\n";
@@ -315,7 +338,17 @@ class node{
                     parent->setColor(1);
                     grand->parent=kid;
                     grand->setColor(1);
-                    kid->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=kid;
+                            kid->parent=backup;
+                        }else{
+                            backup->right=kid;
+                            kid->parent=backup;
+                        }
+                    }
+                    //cout<<"여기까지 오냐?\n";
+                    return kid;
                 }else{//parent grand kid
                     grand->left=parent;
                     grand->right=kid;
@@ -324,7 +357,16 @@ class node{
                     parent->setColor(1);
                     kid->parent=grand;
                     kid->setColor(1);
-                    grand->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=grand;
+                            grand->parent=backup;
+                        }else{
+                            backup->right=grand;
+                            grand->parent=backup;
+                        }
+                    }
+                    return grand;
                 }
             }
         }else{
@@ -336,7 +378,16 @@ class node{
                 grand->setColor(1);
                 kid->parent=parent;
                 kid->setColor(1);
-                parent->parent=backup;
+                if(backup!=NULL){
+                    if(index==0){
+                        backup->left=parent;
+                        parent->parent=backup;
+                    }else{
+                        backup->right=parent;
+                        parent->parent=backup;
+                    }
+                }
+                return parent;
             }else{
                 if(kid->data>grand->data){//grand kid parent
                     kid->left=grand;
@@ -346,7 +397,16 @@ class node{
                     grand->setColor(1);
                     parent->parent=kid;
                     parent->setColor(1);
-                    kid->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=kid;
+                            kid->parent=backup;
+                        }else{
+                            backup->right=kid;
+                            kid->parent=backup;
+                        }
+                    }
+                    return kid;
                 }else{//kid grand parent
                     grand->left=kid;
                     grand->right=parent;
@@ -355,20 +415,34 @@ class node{
                     kid->setColor(1);
                     parent->parent=grand;
                     parent->setColor(1);
-                    grand->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=grand;
+                            grand->parent=backup;
+                        }else{
+                            backup->right=grand;
+                            grand->parent=backup;
+                        }
+                    }
+                    return grand;
                 }
             }
         }
-    }
-    void restructing(node *grand, node *parent, node *kid){
-        node *backup;
+    } 
+    node* restructing(node *grand, node *parent, node *kid){
+        node *backup=NULL;
+        int index;
         if(grand->parent!=NULL){//조상의 부모 노드 있으면 저장해놓음
             if(grand->parent->left==grand){
-                backup=grand->parent->left;
+                backup=grand->parent;
+                index=0;//0이면 left
             }else if(grand->parent->right==grand){
-                backup=grand->parent->right;
+                backup=grand->parent;
+                index=1;//0이면 right
             }
         }
+        cout<<"이게 지금 백업 내용임. ";
+        cout<<backup->getColor()<<" "<<backup->getData()<<"\n";
         //일단 관계 다 끊음 조상의 부모 포인터는 저장해뒀으니까 마지막에 붙여주면 됨
         grand->parent=NULL;
         grand->left=NULL;
@@ -390,7 +464,16 @@ class node{
                 kid->setColor(1);
                 grand->parent=parent;
                 grand->setColor(1);
-                parent->parent=backup;//이렇게해도 되지않나?
+                if(backup!=NULL){
+                    if(index==0){
+                        backup->left=parent;
+                        parent->parent=backup;
+                    }else{
+                        backup->right=parent;
+                        parent->parent=backup;
+                    }
+                }
+                return parent;
             }else{
                 if(grand->data>kid->data){//parent kid grand
                     cout<<"패런트 키드 그랜드 순임\n";
@@ -401,8 +484,17 @@ class node{
                     parent->setColor(1);
                     grand->parent=kid;
                     grand->setColor(1);
-                    kid->parent=backup;
-                    cout<<"여기까지 오냐?\n";
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=kid;
+                            kid->parent=backup;
+                        }else{
+                            backup->right=kid;
+                            kid->parent=backup;
+                        }
+                    }
+                    //cout<<"여기까지 오냐?\n";
+                    return kid;
                 }else{//parent grand kid
                     grand->left=parent;
                     grand->right=kid;
@@ -411,7 +503,16 @@ class node{
                     parent->setColor(1);
                     kid->parent=grand;
                     kid->setColor(1);
-                    grand->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=grand;
+                            grand->parent=backup;
+                        }else{
+                            backup->right=grand;
+                            grand->parent=backup;
+                        }
+                    }
+                    return grand;
                 }
             }
         }else{
@@ -423,7 +524,16 @@ class node{
                 grand->setColor(1);
                 kid->parent=parent;
                 kid->setColor(1);
-                parent->parent=backup;
+                if(backup!=NULL){
+                    if(index==0){
+                        backup->left=parent;
+                        parent->parent=backup;
+                    }else{
+                        backup->right=parent;
+                        parent->parent=backup;
+                    }
+                }
+                return parent;
             }else{
                 if(kid->data>grand->data){//grand kid parent
                     kid->left=grand;
@@ -433,7 +543,16 @@ class node{
                     grand->setColor(1);
                     parent->parent=kid;
                     parent->setColor(1);
-                    kid->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=kid;
+                            kid->parent=backup;
+                        }else{
+                            backup->right=kid;
+                            kid->parent=backup;
+                        }
+                    }
+                    return kid;
                 }else{//kid grand parent
                     grand->left=kid;
                     grand->right=parent;
@@ -442,11 +561,20 @@ class node{
                     kid->setColor(1);
                     parent->parent=grand;
                     parent->setColor(1);
-                    grand->parent=backup;
+                    if(backup!=NULL){
+                        if(index==0){
+                            backup->left=grand;
+                            grand->parent=backup;
+                        }else{
+                            backup->right=grand;
+                            grand->parent=backup;
+                        }
+                    }
+                    return grand;
                 }
             }
         }
-    }
+    } 
     void recoloring(node *grand, node *parent, node *uncle, node *kid){
         grand->color=1;
         kid->color=1;

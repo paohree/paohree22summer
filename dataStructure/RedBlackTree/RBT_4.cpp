@@ -38,14 +38,91 @@ class node{
         over->right=under;
     }
     */
-    node* insertion(node *head, node *newOne){
+    void insertion(node *head, node *newOne){
         //일단 자리에 넣고 부모랑 색깔이 같을 경우에 수정하는 걸로 가자고
         //일단 자리에 넣음->부모랑 더블 레드다?->삼촌 색 확인->
         //recoloring 혹인 restructing->중간꺼랑 그 부모랑 색 비교->
         //또 같으면 다시 실행
         //while로 묶어도 될듯?
+
+        //색깔 미리 정해놓고 콜하도록 하자 생성시 무조건 빨강색
+
+        node *find=head;
+        node *uncle=NULL;
+        node *parent=NULL;
+        node *grand=NULL;
+        node *kid=NULL;
+        if(head==NULL){
+            newOne->color=0;
+            head=newOne;
+        }else{
+    //1. 일단 자리 배치
+            if(find->data>newOne->data&&find->left==NULL){
+                find->left=newOne;
+                newOne->parent=find;
+            }else if(find->data>newOne->data&&find->left!=NULL){
+                find=find->left;
+            }else if(find->data<newOne->data&&find->right==NULL){
+                find->right=newOne;
+                newOne->parent=find;
+            }else if(find->data<newOne->data&&find->right!=NULL){
+                find=find->right;
+            }else{
+                cout<<"같은거 넣으면 안됨 ㅇㅇ\n";
+            }
+    //배치끝!
+    //2. 더블레드 확인
+    //2.1. 배치
+    //newNode위치 이용해야할거같음
+    //삼촌이 없다면 검정색이 있는 것으로 간주한다
+            while(1){
+                if(newOne->color==1&&newOne->parent->color==1){
+                    kid=newOne;
+                    parent=newOne->parent;
+                    if(parent->parent!=NULL){
+                        grand=parent->parent;
+                        if(parent==grand->left&&grand->right!=NULL){
+                        //삼촌있다
+                            uncle=grand->right;
+                        }else if(parent==grand->left&&grand->right==NULL){
+                        //삼촌없다
+                            uncle=NULL;
+                        }else if(parent==grand->right&&grand->left!=NULL){
+                        //삼촌있다
+                            uncle=grand->left;
+                        }else if(parent==grand->right&&grand->left==NULL){
+                        //삼촌없다
+                            uncle=NULL;
+                        }else{
+                            cout<<"이게 나오면 안됨. 근데 보기좋으라고 일단 채워놓음.\n";
+                        }
+                    }//그랜드 삼촌 부모 자식 노드 배치 끝난거지 여기까지 하면
+    //2.2. recoloring 인지 restructing인지 판단
+    //0이 검정임
+                if(uncle==NULL||uncle!=NULL&&uncle->color==0){
+                    //여기는 restructing임
+                    if(uncle!=NULL){
+
+                    }else{
+
+                    }
+                }else if(uncle!=NULL&&uncle->color==1){
+                    //여기는 recoloring임
+
+                }else{
+                    cout<<"이 경우는 나올 수 없음. 보기좋으라고 채워놓음.\n";
+                }
+            }else{
+                if(newOne->parent!=NULL){
+                    newOne=newOne->parent;//부모로 넘김 ㅇㅇ
+                }else{
+                    break;//parent가 null이면 head라는 소리지 그럼 break 할거임
+                }
+            }
+        }
+        }
     }
-    node* deletion(node *head, node *something){
+    void deletion(node *head, node *something){
         //일단 위치 찾아야하는거아님?
         int numberBig;
         int numberSmall;
@@ -148,5 +225,14 @@ class node{
                 find(head->right, target);
             }
         }
+    }
+    void restructing(node *grand, node *parent, node *kid, node* uncle){
+        
+    }
+    void restructing(node *grand, node *parent, node *kid){
+
+    }
+    void recoloring(node *grand, node *parent, node *uncle, node *kid){
+
     }
 };

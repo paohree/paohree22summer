@@ -8,9 +8,18 @@ class node{
     public:
     node *parent;
     node *left, *right;
-    node(int number, int colour){
-        data=number;
-        color=colour;
+    node(){
+        int number;
+        cout<<"숫자를 입력하세요\n";
+        cin>>number;
+        //cout<<"test\n";
+        setData(number);
+        //cout<<"test\n";
+        setColor(1);
+        //cout<<"test\n";
+        parent=NULL;
+        left=NULL;
+        right=NULL;
     }
     ~node(){
         delete this;
@@ -38,7 +47,7 @@ class node{
         over->right=under;
     }
     */
-    void insertion(node *head, node *newOne){
+    node* insertion(node *head, node *newOne){
         //일단 자리에 넣고 부모랑 색깔이 같을 경우에 수정하는 걸로 가자고
         //일단 자리에 넣음->부모랑 더블 레드다?->삼촌 색 확인->
         //recoloring 혹인 restructing->중간꺼랑 그 부모랑 색 비교->
@@ -47,28 +56,37 @@ class node{
 
         //색깔 미리 정해놓고 콜하도록 하자 생성시 무조건 빨강색
 
+        //cout<<"test\n";
         node *find=head;
         node *uncle=NULL;
         node *parent=NULL;
         node *grand=NULL;
         node *kid=NULL;
+        //cout<<"test\n";
         if(head==NULL){
-            newOne->color=0;
+            cout<<"test\n";
+            newOne->setColor(0);
             head=newOne;
+            return head;
         }else{
     //1. 일단 자리 배치
-            if(find->data>newOne->data&&find->left==NULL){
-                find->left=newOne;
-                newOne->parent=find;
-            }else if(find->data>newOne->data&&find->left!=NULL){
-                find=find->left;
-            }else if(find->data<newOne->data&&find->right==NULL){
-                find->right=newOne;
-                newOne->parent=find;
-            }else if(find->data<newOne->data&&find->right!=NULL){
-                find=find->right;
-            }else{
-                cout<<"같은거 넣으면 안됨 ㅇㅇ\n";
+            while(1){
+                if(find->data>newOne->data&&find->left==NULL){
+                    find->left=newOne;
+                    newOne->parent=find;
+                    break;
+                }else if(find->data>newOne->data&&find->left!=NULL){
+                   find=find->left;
+                }else if(find->data<newOne->data&&find->right==NULL){
+                    find->right=newOne;
+                    newOne->parent=find;
+                    break;
+                }else if(find->data<newOne->data&&find->right!=NULL){
+                    find=find->right;
+                }else{
+                    cout<<"같은거 넣으면 안됨 ㅇㅇ\n";
+                    return head;
+                }
             }
     //배치끝!
     //2. 더블레드 확인
@@ -76,7 +94,7 @@ class node{
     //newNode위치 이용해야할거같음
     //삼촌이 없다면 검정색이 있는 것으로 간주한다
             while(1){
-                if(newOne->color==1&&newOne->parent->color==1){
+                if(newOne->getColor()==1&&newOne->parent->getColor()==1){//더블레드라면
                     kid=newOne;
                     parent=newOne->parent;
                     if(parent->parent!=NULL){
@@ -96,46 +114,54 @@ class node{
                         }else{
                             cout<<"이게 나오면 안됨. 근데 보기좋으라고 일단 채워놓음.\n";
                         }
-                    }//그랜드 삼촌 부모 자식 노드 배치 끝난거지 여기까지 하면
-    //2.2. recoloring 인지 restructing인지 판단
-    //0이 검정임
-                if(uncle==NULL||uncle!=NULL&&uncle->color==0){
-                    //여기는 restructing임
-                    if(uncle!=NULL){
-                        if(grand==head){
-                            restructing(grand, parent, kid);
-                            head=grand;
+                    }   //그랜드 삼촌 부모 자식 노드 배치 끝난거지 여기까지 하면
+                            //2.2. recoloring 인지 restructing인지 판단
+                            //0이 검정임
+                    if(uncle==NULL||uncle!=NULL&&uncle->getColor()==0){
+                            //여기는 restructing임
+                        if(uncle!=NULL){
+                            if(grand==head){
+                                cout<<"여기까지 와서 삼촌있 재건축 조상이 헤드\n";
+                                restructing(grand, parent, kid,uncle);
+                                head=grand;
+                            }else{
+                                cout<<"여기까지 와서 삼촌있 재건축 조상 노 헤드\n";
+                                restructing(grand, parent, kid,uncle);
+                            }
                         }else{
-                            restructing(grand, parent, kid);
+                            if(grand==head){
+                                cout<<"여기까지 와서 삼촌없 재건축 조상 헤드\n";
+                                restructing(grand, parent, kid);
+                                head=grand;
+                            }else{
+                                cout<<"여기까지 와서 삼촌없 재건축 조상 노 헤드\n";
+                                restructing(grand, parent, kid);
+                            }
+                        }
+                    }else if(uncle!=NULL&&uncle->getColor()==1){
+                            //여기는 recoloring임
+                        cout<<"리컬러링 ㅇㅇ\n";
+                        recoloring(grand, parent, uncle, kid);
+                        if(grand==head){
+                            cout<<"리컬러링 했는데 조상이 헤드라 검정칠해줌\n";
+                            grand->color=0;
                         }
                     }else{
-                        if(grand==head){
-                            restructing(grand, parent, kid);
-                            head=grand;
-                        }else{
-                            restructing(grand, parent, kid);
-                        }
+                        cout<<"이 경우는 나올 수 없음. 보기좋으라고 채워놓음.\n";
                     }
-                }else if(uncle!=NULL&&uncle->color==1){
-                    //여기는 recoloring임
-                    recoloring(grand, parent, uncle, kid);
-                    if(grand==head){
-                        grand->color=0;
+                }else{//더블 레드가 아니라면
+                    if(newOne->parent==NULL){
+                        cout<<"헤드와서 리턴";
+                        return head;//parent가 null이면 head라는 소리지 그럼 return 할거임
+                    }else{
+                        cout<<"부모로 넘김\n";
+                        newOne=newOne->parent;//부모로 넘김 ㅇㅇ
                     }
-                }else{
-                    cout<<"이 경우는 나올 수 없음. 보기좋으라고 채워놓음.\n";
-                }
-            }else{
-                if(newOne->parent!=NULL){
-                    newOne=newOne->parent;//부모로 넘김 ㅇㅇ
-                }else{
-                    break;//parent가 null이면 head라는 소리지 그럼 break 할거임
                 }
             }
         }
-        }
     }
-    void deletion(node *head, node *something){
+    void deletion(node *head, int something){
         //일단 위치 찾아야하는거아님?
         int numberBig;
         int numberSmall;
@@ -148,7 +174,7 @@ class node{
                 if(target->parent->left==target){
                     target->parent->left=NULL;
                     delete target;
-                }else if(target->parent->right=target){
+                }else if(target->parent->right==target){
                     target->parent->right=NULL;
                     delete target;
                 }
@@ -156,7 +182,7 @@ class node{
                 if(target->parent->left==target){
                     target->parent->left=target->right;
                     delete target;
-                }else if(target->parent->right=target){
+                }else if(target->parent->right==target){
                     target->parent->right=target->right;
                     delete target;
                 }
@@ -164,7 +190,7 @@ class node{
                 if(target->parent->left==target){
                     target->parent->left=target->left;
                     delete target;
-                }else if(target->parent->right=target){
+                }else if(target->parent->right==target){
                     target->parent->right=target->left;
                     delete target;
                 }
@@ -194,7 +220,7 @@ class node{
                         bigNumber->left=target->left;
                         bigNumber->right=target->right;
                         delete target;
-                    }else if(target->parent->right=target){
+                    }else if(target->parent->right==target){
                         target->parent->right=bigNumber;
                         bigNumber->parent->left=NULL;
                         bigNumber->left=target->left;
@@ -208,7 +234,7 @@ class node{
                         smallNumber->left=target->left;
                         smallNumber->right=target->right;
                         delete target;
-                    }else if(target->parent->right=target){
+                    }else if(target->parent->right==target){
                         target->parent->right=smallNumber;
                         smallNumber->parent->right=NULL;
                         smallNumber->left=target->left;
@@ -224,20 +250,26 @@ class node{
     void inorderPrint(node *head){//이거는 일단 된거같음
         if(head!=NULL){
             inorderPrint(head->left);
-            cout<<head->getData()<<"\n";
+            cout<<head->getData()<<" ";
+            if(head->getColor()==1){
+                cout<<"RED\n";
+            }else{
+                cout<<"BLACk\n";
+            }
             inorderPrint(head->right);
         }
     }
-    node* find(node *head, node* target){//이러면 되지 않을까? 이거 포인터 반환임
-        if(head!=NULL){
-            if(head->getData()==target->getData()){
-                //cout<<head->getData()<<"\n";
+    node* find(node *head, int target){//이러면 되지 않을까? 이거 포인터 반환임
+        while(head!=NULL){
+            if(head->getData()==target){
                 return head;
+            }else if(head->getData()<target){
+                head=head->right;
             }else{
-                find(head->left, target);
-                find(head->right, target);
+                head=head->left;
             }
         }
+        return NULL;
     }
     void restructing(node *grand, node *parent, node *kid, node* uncle){
         node *backup;
@@ -266,22 +298,32 @@ class node{
         if(grand->data>parent->data){
             if(parent->data>kid->data){//작은순대로 kid parent grand
                 parent->left=kid;
-                kid->parent=parent;
                 parent->right=grand;
+                parent->setColor(0);
+                kid->parent=parent;
+                kid->setColor(1);
                 grand->parent=parent;
+                grand->setColor(1);
                 parent->parent=backup;//이렇게해도 되지않나?
             }else{
                 if(grand->data>kid->data){//parent kid grand
+                    cout<<"패런트 키드 그랜드 순임\n";
                     kid->left=parent;
                     kid->right=grand;
+                    kid->setColor(0);
                     parent->parent=kid;
+                    parent->setColor(1);
                     grand->parent=kid;
+                    grand->setColor(1);
                     kid->parent=backup;
                 }else{//parent grand kid
                     grand->left=parent;
                     grand->right=kid;
+                    grand->setColor(0);
                     parent->parent=grand;
+                    parent->setColor(1);
                     kid->parent=grand;
+                    kid->setColor(1);
                     grand->parent=backup;
                 }
             }
@@ -289,21 +331,30 @@ class node{
             if(parent->data<kid->data){//grand parent kid
                 parent->left=grand;
                 parent->right=kid;
+                parent->setColor(0);
                 grand->parent=parent;
+                grand->setColor(1);
                 kid->parent=parent;
+                kid->setColor(1);
                 parent->parent=backup;
             }else{
                 if(kid->data>grand->data){//grand kid parent
                     kid->left=grand;
                     kid->right=parent;
+                    kid->setColor(0);
                     grand->parent=kid;
+                    grand->setColor(1);
                     parent->parent=kid;
+                    parent->setColor(1);
                     kid->parent=backup;
                 }else{//kid grand parent
                     grand->left=kid;
                     grand->right=parent;
+                    grand->setColor(0);
                     kid->parent=grand;
+                    kid->setColor(1);
                     parent->parent=grand;
+                    parent->setColor(1);
                     grand->parent=backup;
                 }
             }
@@ -320,10 +371,10 @@ class node{
         }
         //일단 관계 다 끊음 조상의 부모 포인터는 저장해뒀으니까 마지막에 붙여주면 됨
         grand->parent=NULL;
-        grand->left==NULL;
+        grand->left=NULL;
         grand->right=NULL;
         parent->parent=NULL;
-        parent->right==NULL;
+        parent->right=NULL;
         parent->left=NULL;
         kid->parent=NULL;
         kid->right=NULL;
@@ -333,22 +384,33 @@ class node{
         if(grand->data>parent->data){
             if(parent->data>kid->data){//작은순대로 kid parent grand
                 parent->left=kid;
-                kid->parent=parent;
                 parent->right=grand;
+                parent->setColor(0);
+                kid->parent=parent;
+                kid->setColor(1);
                 grand->parent=parent;
+                grand->setColor(1);
                 parent->parent=backup;//이렇게해도 되지않나?
             }else{
                 if(grand->data>kid->data){//parent kid grand
+                    cout<<"패런트 키드 그랜드 순임\n";
                     kid->left=parent;
                     kid->right=grand;
+                    kid->setColor(0);
                     parent->parent=kid;
+                    parent->setColor(1);
                     grand->parent=kid;
+                    grand->setColor(1);
                     kid->parent=backup;
+                    cout<<"여기까지 오냐?\n";
                 }else{//parent grand kid
                     grand->left=parent;
                     grand->right=kid;
+                    grand->setColor(0);
                     parent->parent=grand;
+                    parent->setColor(1);
                     kid->parent=grand;
+                    kid->setColor(1);
                     grand->parent=backup;
                 }
             }
@@ -356,21 +418,30 @@ class node{
             if(parent->data<kid->data){//grand parent kid
                 parent->left=grand;
                 parent->right=kid;
+                parent->setColor(0);
                 grand->parent=parent;
+                grand->setColor(1);
                 kid->parent=parent;
+                kid->setColor(1);
                 parent->parent=backup;
             }else{
                 if(kid->data>grand->data){//grand kid parent
                     kid->left=grand;
                     kid->right=parent;
+                    kid->setColor(0);
                     grand->parent=kid;
+                    grand->setColor(1);
                     parent->parent=kid;
+                    parent->setColor(1);
                     kid->parent=backup;
                 }else{//kid grand parent
                     grand->left=kid;
                     grand->right=parent;
+                    grand->setColor(0);
                     kid->parent=grand;
+                    kid->setColor(1);
                     parent->parent=grand;
+                    parent->setColor(1);
                     grand->parent=backup;
                 }
             }

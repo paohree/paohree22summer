@@ -5,7 +5,7 @@ int main(void){
     node *head=NULL;
     node *newOne=NULL;
     node *get=NULL;
-    int find;
+    int wantNumber;
     string userWant;
     while(1){
         cout<<"\n";
@@ -16,14 +16,26 @@ int main(void){
         if(userWant=="new"||userWant=="1"){
             newOne=new node;
             head=newOne->node::insertion(head,newOne);
+            cout<<"\n";
         }else if(userWant=="delete"||userWant=="2"){
+            cout<<"숫자를 입력하세요.\n";
+            cin>>wantNumber;
+            cout<<"\n";
+            head->node::deletion(head,wantNumber);
+            get=head->node::find(head,wantNumber);
+            if(get==NULL){
+                cout<<"지워졌습니다\n";
+            }else{
+                cout<<"아직 있는데? 안지워졌음 ㅇㅇ\n";
+                cout<<get->getData()<<" "<<get->getColor()<<" \n";
+            }
         }else if(userWant=="print"||userWant=="4"){
             head->node::inorderPrint(head);
         }else if(userWant=="find"||userWant=="3"){
             cout<<"숫자를 입력하세요.\n";
-            cin>>find;
+            cin>>wantNumber;
             cout<<"\n";
-            get=head->node::find(head,find);
+            get=head->node::find(head,wantNumber);
             if(get==NULL){
                 cout<<"그런거없음\n";
             }else{

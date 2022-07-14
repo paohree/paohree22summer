@@ -628,12 +628,12 @@ class node{
     }
     void deletion(node *head, int something){
         //일단 위치 찾아야하는거아님?
-        int numberBig;
-        int numberSmall;
-        int check;
+        int numberBig=0;
+        int numberSmall=0;
+        int check=0;
         node* target=NULL;
-        node* smallNumber;
-        node* bigNumber;
+        node* smallNumber=NULL;
+        node* bigNumber=NULL;
         node* checkPoint;
         node *uncle=NULL;
         node *parent=NULL;
@@ -681,7 +681,12 @@ class node{
                     checkPoint=target->left;
                     delete target;
                 }
+
+
+
+
             }else{//둘자식 오른쪽에서 제일 작은거 또는 왼쪽에서 제일 큰거를 삭제당하는 애 자리로
+                cout<<"어디까지 왔나 와드\n";
                 smallNumber=target;//왼쪽에서 제일 큰거
                 if(smallNumber->left!=NULL){//그래도 타겟보다 작으니까 스몰넘버임
                     smallNumber=smallNumber->left;
@@ -690,6 +695,8 @@ class node{
                         smallNumber=smallNumber->right;
                         numberSmall++;
                     }
+                    cout<<smallNumber->getData()<<" "<<smallNumber->getColor()<<" "<<"작은거중에 제일큰거 구함\n";
+                    cout<<"numberSmall은 "<<numberSmall<<"임\n";
                 }
                 bigNumber=target;//오른쪽에서 제일 작은거
                 if(bigNumber->right!=NULL){//그래도 타겟보다 크므로 빅넘버임
@@ -699,11 +706,11 @@ class node{
                         bigNumber=bigNumber->left;
                         numberBig++;
                     }
-                }
+                    cout<<bigNumber->getData()<<" "<<bigNumber->getColor()<<" "<<"큰거중에 제일 작은거 구함\n";
+                    cout<<"numberBig은 "<<numberBig<<"임\n";
+                }//여기까지는 돌아가는데 문제가 없음 
 
-
-
-                if(numberBig>=numberSmall){//오른쪽에서 제일 작은게 더 깊게 있는거임
+                if(numberBig>=numberSmall){//오른쪽에서 제일 작은게 더 깊게 있는거임 혹은 같은거임
                     if(target->parent->left==target){//1
                         if(numberBig==1){
                             bigNumber->left=target->left;
@@ -723,10 +730,16 @@ class node{
                         }
                     }else if(target->parent->right==target){//2
                         if(numberBig==1){
+                            cout<<"어디까지 왔나 와드1\n";
                             bigNumber->left=target->left;
+                            cout<<"어디까지 왔나 와드2\n";
                             target->left->parent=bigNumber;
+                            cout<<"어디까지 왔나 와드3\n";
                             bigNumber->parent=target->parent;
+                            cout<<"어디까지 왔나 와드4\n";
                             target->parent->right=bigNumber;
+                            cout<<"어디까지 왔나 와드5\n";
+                            cout<<"타겟자리 차지하는 노드는 "<<bigNumber->getData()<<"에 "<<bigNumber->getColor()<<"색임\n";
                             delete target;
                         }else{
                             bigNumber->parent->left=NULL;
@@ -737,6 +750,7 @@ class node{
                             bigNumber->right=target->right;
                             target->right->parent=bigNumber;
                             delete target;
+                            //cout<<"어디까지 왔나 와드\n";
                         }
                     }else{
                         cout<<"나올수없는경우임\n";
@@ -749,6 +763,7 @@ class node{
                             target->parent->left=smallNumber;
                             smallNumber->parent=target->parent;
                             delete target;
+                            cout<<"어디까지 왔나 와드\n";
                         }else{
                             smallNumber->parent->right=NULL;
                             smallNumber->parent=target->parent;
@@ -758,6 +773,7 @@ class node{
                             target->right->parent=smallNumber;
                             target->parent->left=smallNumber;
                             delete target;
+                            cout<<"어디까지 왔나 와드\n";
                         }
                     }else if(target->parent->right==target){//4
                         if(numberSmall==1){
@@ -766,6 +782,7 @@ class node{
                             smallNumber->right=target->right;
                             target->right->parent=smallNumber;
                             delete target;
+                            cout<<"어디까지 왔나 와드\n";
                         }else{
                             smallNumber->parent->right=NULL;
                             smallNumber->parent=target->parent;
@@ -775,6 +792,7 @@ class node{
                             target->right->parent=smallNumber;
                             target->left->parent=smallNumber;
                             delete target;
+                            cout<<"어디까지 왔나 와드\n";
                         }
                     }else{
                         cout<<"나올수없는경우임\n";

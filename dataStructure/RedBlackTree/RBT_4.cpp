@@ -683,7 +683,7 @@ class node{
                 }
             }else{//둘자식 오른쪽에서 제일 작은거 또는 왼쪽에서 제일 큰거를 삭제당하는 애 자리로
                 smallNumber=target;//왼쪽에서 제일 큰거
-                if(smallNumber->left!=NULL){
+                if(smallNumber->left!=NULL){//그래도 타겟보다 작으니까 스몰넘버임
                     smallNumber=smallNumber->left;
                     numberSmall++;
                     while(smallNumber->right!=NULL){
@@ -692,7 +692,7 @@ class node{
                     }
                 }
                 bigNumber=target;//오른쪽에서 제일 작은거
-                if(bigNumber->right!=NULL){
+                if(bigNumber->right!=NULL){//그래도 타겟보다 크므로 빅넘버임
                     bigNumber=bigNumber->right;
                     numberBig++;
                     while(bigNumber->left!=NULL){
@@ -700,39 +700,91 @@ class node{
                         numberBig++;
                     }
                 }
-                if(numberBig>numberSmall){//왼쪽에서 제일 큰게 더 깊게 있는거임
-                    if(target->parent->left==target){
-                        target->parent->left=bigNumber;
-                        bigNumber->parent->left=NULL;
-                        bigNumber->left=target->left;
-                        bigNumber->right=target->right;
-                        bigNumber->parent=target->parent;
-                        delete target;
-                    }else if(target->parent->right==target){
-                        target->parent->right=bigNumber;
-                        bigNumber->parent->left=NULL;
-                        bigNumber->left=target->left;
-                        bigNumber->right=target->right;
-                        bigNumber->parent=target->parent;
-                        delete target;
+
+
+
+                if(numberBig>=numberSmall){//오른쪽에서 제일 작은게 더 깊게 있는거임
+                    if(target->parent->left==target){//1
+                        if(numberBig==1){
+                            bigNumber->left=target->left;
+                            target->left->parent=bigNumber;
+                            bigNumber->parent=target->parent;
+                            target->parent->left=bigNumber;
+                            delete target;
+                        }else{
+                            bigNumber->parent->left=NULL;
+                            bigNumber->parent=target->parent;
+                            target->parent->left=bigNumber;
+                            bigNumber->left=target->left;
+                            target->left->parent=bigNumber;
+                            bigNumber->right=target->right;
+                            target->right->parent=bigNumber;
+                            delete target;
+                        }
+                    }else if(target->parent->right==target){//2
+                        if(numberBig==1){
+                            bigNumber->left=target->left;
+                            target->left->parent=bigNumber;
+                            bigNumber->parent=target->parent;
+                            target->parent->right=bigNumber;
+                            delete target;
+                        }else{
+                            bigNumber->parent->left=NULL;
+                            bigNumber->parent=target->parent;
+                            target->parent->right=bigNumber;
+                            bigNumber->left=target->left;
+                            target->left->parent=bigNumber;
+                            bigNumber->right=target->right;
+                            target->right->parent=bigNumber;
+                            delete target;
+                        }
+                    }else{
+                        cout<<"나올수없는경우임\n";
                     }
-                }else if(numberBig<=numberSmall){//오른쪽에서 제일 작은게 더 깊게 있는거임
-                    if(target->parent->left==target){
-                        target->parent->left=smallNumber;
-                        smallNumber->parent->right=NULL;
-                        smallNumber->left=target->left;
-                        smallNumber->right=target->right;
-                        smallNumber->parent=target->parent;
-                        delete target;
-                    }else if(target->parent->right==target){
-                        target->parent->right=smallNumber;
-                        smallNumber->parent->right=NULL;
-                        smallNumber->left=target->left;
-                        smallNumber->right=target->right;
-                        smallNumber->parent=target->parent;
-                        delete target;
+                }else if(numberBig<numberSmall){//왼쪽에서 제일 큰게 더 깊게있는거임
+                    if(target->parent->left==target){//3
+                        if(numberSmall==1){
+                            smallNumber->right=target->right;
+                            target->right->parent=smallNumber;
+                            target->parent->left=smallNumber;
+                            smallNumber->parent=target->parent;
+                            delete target;
+                        }else{
+                            smallNumber->parent->right=NULL;
+                            smallNumber->parent=target->parent;
+                            smallNumber->left=target->left;
+                            target->left->parent=smallNumber;
+                            smallNumber->right=target->right;
+                            target->right->parent=smallNumber;
+                            target->parent->left=smallNumber;
+                            delete target;
+                        }
+                    }else if(target->parent->right==target){//4
+                        if(numberSmall==1){
+                            smallNumber->parent=target->parent;
+                            target->parent->right=smallNumber;
+                            smallNumber->right=target->right;
+                            target->right->parent=smallNumber;
+                            delete target;
+                        }else{
+                            smallNumber->parent->right=NULL;
+                            smallNumber->parent=target->parent;
+                            target->parent->right=smallNumber;
+                            smallNumber->left=target->left;
+                            smallNumber->right=target->right;
+                            target->right->parent=smallNumber;
+                            target->left->parent=smallNumber;
+                            delete target;
+                        }
+                    }else{
+                        cout<<"나올수없는경우임\n";
                     }
+                }else{
+                    cout<<"나올 수 없는 경우임 이거 나오면 안됨\n";
                 }
+
+
+
             }
             //여기에서 더블레드 확인해야함
 

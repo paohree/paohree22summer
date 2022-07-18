@@ -1,16 +1,7 @@
 
-//레벨오더로 프린트
-//아니면 트리 프린트 잘해보셈 인오더는 별로일수있음 레벨이 안보이잖아?
 
-//인오더 ㄴㄴ
-//딜리션언제하노
+//코드 폐기함
 
-
-//해야할 일 딜리션 블로그
-// 레벨오더 프린트 구현
-//맵 구현
-//ㅇㅇ 이순서로 하면 됨
-//내일 백준 문제풀고
 #include<iostream>
 #include<queue>
 using namespace std;
@@ -754,7 +745,7 @@ void doubleBlack(node* child, node* parent)
                 }
 				parent->left->setColor(0);
 				parent->left->left->setColor(1);
-				sibling->parent->left;
+				sibling=parent->left;
 			}
 		}
 		
@@ -803,13 +794,13 @@ void doubleBlack(node* child, node* parent)
                     checkPoint=target->parent;
                     index=1;
                     delete target;
-                    doubleBlack();
+                    doubleBlack(NULL,checkPoint);
                 }else if(target->parent->right==target){
                     target->parent->right=NULL;
                     checkPoint=target->parent;
                     index=1;
                     delete target;
-                    doubleBlack();
+                    doubleBlack(NULL,checkPoint);
                 }
             }else if(target->right!=NULL&&target->left==NULL){//오른자식
                 if(target->parent->left==target){
@@ -836,7 +827,7 @@ void doubleBlack(node* child, node* parent)
                     // }
                     delete target;
                     if(index==1){
-                        doubleBlack();
+                        doubleBlack(checkPoint,checkPoint->parent);
                     }
                 }else if(target->parent->right==target){
                     //cout<<"이 문장이 나와야 함\n";
@@ -866,7 +857,7 @@ void doubleBlack(node* child, node* parent)
                     // }
                     delete target;
                     if(index==1){
-                        doubleBlack();
+                        doubleBlack(checkPoint,checkPoint->parent);
                      }
                     //cout<<"내가 문제다 4\n";
                 }
@@ -895,7 +886,7 @@ void doubleBlack(node* child, node* parent)
                     // }
                     delete target;
                     if(index==1){
-                        doubleBlack();
+                        doubleBlack(checkPoint,checkPoint->parent);
                     }
                 }else if(target->parent->right==target){
                     target->parent->right=target->left;
@@ -921,7 +912,7 @@ void doubleBlack(node* child, node* parent)
                     // }
                     delete target;
                     if(index==1){
-                        doubleBlack();
+                        doubleBlack(checkPoint,checkPoint->parent);
                     }
                 }
             }else{//둘자식 오른쪽에서 제일 작은거 또는 왼쪽에서 제일 큰거를 삭제당하는 애 자리로
@@ -1029,7 +1020,7 @@ void doubleBlack(node* child, node* parent)
                              checkPoint->setColor(target->getColor());
                              delete target;
                             if(index==1){
-                                doubleBlack();
+                                doubleBlack(checkPoint,checkPoint->parent);
                              }
                              //cout<<"어디까지 왔나 와드\n";
                          }else{
@@ -1053,7 +1044,7 @@ void doubleBlack(node* child, node* parent)
                              checkPoint->setColor(target->getColor());
                              delete target;
                             if(index==1){
-                                doubleBlack();
+                                doubleBlack(checkPoint,checkPoint->parent);
                              }
                              //cout<<"어디까지 왔나 와드\n";
                          }
@@ -1076,7 +1067,7 @@ void doubleBlack(node* child, node* parent)
                              checkPoint->setColor(target->getColor());
                              delete target;
                             if(index==1){
-                                doubleBlack();
+                                doubleBlack(checkPoint,checkPoint->parent);
                              }
                              //cout<<"어디까지 왔나 와드\n";
                          }else{
@@ -1100,7 +1091,7 @@ void doubleBlack(node* child, node* parent)
                              checkPoint->setColor(target->getColor());
                              delete target;
                              if(index==1){
-                                doubleBlack();
+                                doubleBlack(checkPoint,checkPoint->parent);
                              }
                              //cout<<"어디까지 왔나 와드\n";
                          }

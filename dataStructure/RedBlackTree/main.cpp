@@ -31,6 +31,7 @@ int main(void){
             }
         }else if(userWant=="print"||userWant=="4"){
             head->node::inorderPrint(head);
+            cout<<"\n";
         }else if(userWant=="find"||userWant=="3"){
             cout<<"숫자를 입력하세요.\n";
             cin>>wantNumber;

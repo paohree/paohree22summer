@@ -1,5 +1,18 @@
-//abcd누가이기나 해보자고
+
+//레벨오더로 프린트
+//아니면 트리 프린트 잘해보셈 인오더는 별로일수있음 레벨이 안보이잖아?
+
+//인오더 ㄴㄴ
+//딜리션언제하노
+
+
+//해야할 일 딜리션 블로그
+// 레벨오더 프린트 구현
+//맵 구현
+//ㅇㅇ 이순서로 하면 됨
+//내일 백준 문제풀고
 #include<iostream>
+#include<queue>
 using namespace std;
 class node{
     private:
@@ -169,17 +182,32 @@ class node{
             }
         }
     }
-    void inorderPrint(node *head){//이거는 일단 된거같음
+    queue<node*> q;
+    void inorderPrint(node *head){//이거는 일단 된거같음 블로그보고함
         if(head!=NULL){
-            inorderPrint(head->left);
-            cout<<head->getData()<<" ";
-            if(head->getColor()==1){
-                cout<<"RED\n";
-            }else{
-                cout<<"BLACK\n";
-            }
-            inorderPrint(head->right);
+            q.push(head);
         }
+        while(q.empty()==false){
+            node *nodes = q.front();
+            cout<<nodes->data<<" "<<nodes->getColor()<<"   ";
+            q.pop();
+            if(nodes->left!=NULL){
+                q.push(nodes->left);
+            }
+            if(nodes->right!=NULL){
+                q.push(nodes->right);
+            }
+        }
+        // if(head!=NULL){
+        //     inorderPrint(head->left);
+        //     cout<<head->getData()<<" ";
+        //     if(head->getColor()==1){
+        //         cout<<"RED\n";
+        //     }else{
+        //         cout<<"BLACK\n";
+        //     }
+        //     inorderPrint(head->right);
+        //}
     }
     node* find(node *head, int target){//이러면 되지 않을까? 이거 포인터 반환임
         while(head!=NULL){
@@ -626,15 +654,133 @@ class node{
         uncle->color=0;
         parent->color=0;
     }
+    node* leftRotation(node *grand, node *left, node *right, node *rightleft){
+        grand->parent=right;
+        right->left=grand;
+        if(rightleft!=NULL){
+            rightleft->parent=grand;
+            grand->right=rightleft;
+        }
+        return grand;        
+    }
+    node* rightRotation(node *grand, node *left, node*right, node*leftright){
+        grand->parent=left;
+        left->right=grand;
+        if(leftright!=NULL){
+            grand->left=leftright;
+            leftright->parent=grand;
+        }
+        return left;
+    }
+void doubleBlack(node* child, node* parent)
+{
+	while (nullptr != parent)
+	{
+		bool left = parent->left == child;
+		node* sibling = left ? parent->right : parent->left;
+		if (1 == parent->getColor())
+		{
+			if (0 == sibling->left->getColor() && 0 == sibling->right->getColor())
+			{
+				// case 1
+				// parent : red, sibling : black, sibling left : black, sibling right : black
+				sibling->setColor(1);
+				parent->setColor(0);
+				break; 
+			}
+		}
+		else if(0 == sibling->left->getColor() && 0 == sibling->right->getColor())
+		{
+			if (0 == sibling->getColor())
+			{
+				// case 4
+				// parent : black, sibling : black, sibling left : black, sibling right : black
+				sibling->setColor(1);
+				child = parent;
+				parent = parent->parent;
+				continue; 
+			}
+			else // RED == sibling->_color
+			{
+				// case 5
+				// parent : black, sibling : red, sibling left : black, sibling right : black
+				parent->setColor(1);
+				sibling->setColor(0);
+				if (left)
+				{
+                    if(parent->right!=NULL&&parent->right->left!=NULL){
+					    leftRotation(parent,parent->left,parent->right,parent->right->left);
+                    }else{
+                        leftRotation(parent, parent->left,parent->right,NULL);
+                    }
+					sibling = parent->right;
+				}
+				else
+				{
+                    if(parent->left!=NULL&&parent->left->right!=NULL){
+                        rightRotation(parent,parent->left,parent->right,parent->left->right);
+                    }else{
+                        rightRotation(parent,parent->left,parent->right,NULL);
+                    }
+					sibling = parent->left;
+				}
+				continue;
+			}
+		}
+
+		if (0 == sibling->getColor() &&
+			((left && 1 == sibling->left->getColor() && 0 == sibling->right->getColor())
+				|| (!left && 0 == sibling->left->getColor() && 1 == sibling->right->getColor())))
+		{
+			// case 3
+			// parent : all, sibling : black, sibling left : red, sibling right : black
+			if (left)
+			{
+                if(sibling->right!=NULL&&sibling->right->left!=NULL){
+                    rightRotation(sibling, sibling->left,sibling->right,sibling->left->right);
+                }else{
+                    rightRotation(sibling, sibling->left,sibling->right,NULL);
+                }
+				parent->right->setColor(0);
+				parent->right->right->setColor(1);
+				sibling = parent->right;
+			}
+			else
+			{
+                if(sibling->right!=NULL&&parent->right->left!=NULL){
+                    leftRotation(sibling, sibling->left,sibling->right,sibling->right->left);
+                }else{
+                    leftRotation(sibling, sibling->left, sibling->right, NULL);
+                }
+				parent->left->setColor(0);
+				parent->left->left->setColor(1);
+				sibling->parent->left;
+			}
+		}
+		
+		if (0 == sibling->getColor() && ((left && 1 == sibling->right->getColor()) || (!left && 1 == sibling->left->getColor())))
+		{
+			// case 2
+			// parent : all, sibling : black, sibling left : all, sibling right : red
+			left ? leftRotation(parent,parent->left,parent->right,parent->right->left) :rightRotation(parent,parent->left,parent->right,parent->left->right);
+			int temp = parent->getColor();
+			parent->setColor(sibling->getColor());
+			sibling->setColor(temp);
+			left ? sibling->right->setColor(0) : sibling->left->setColor(0);
+			break; 
+		}
+	}
+}
     void deletion(node *head, int something){
         //일단 위치 찾아야하는거아님?
         int numberBig=0;
         int numberSmall=0;
         int check=0;
+        int index=0;//대체자와 대체자의 자녀가 모두 블랙일 경우 함수호출을 위한 표식
         node* target=NULL;
         node* smallNumber=NULL;
         node* bigNumber=NULL;
-        node* checkPoint;
+        node* checkPoint=NULL;
         node *uncle=NULL;
         node *parent=NULL;
         node *grand=NULL;
@@ -642,51 +788,144 @@ class node{
         cout<<"딜리션 시작 find 시작\n";
         target=find(head,something);
         cout<<"find 끝났다\n";
+        //헤드삭제 고려 안한거같은데?????
         if(target!=NULL){
+            // if(target->getColor()==0){
+            //     index=0;
+            // }else if(target->getColor()==1){
+            //     index=1;
+            // }else{
+            //     cout<<"이 경우는 나올 수 없음.\n";
+            // }
             if(target->left==NULL&&target->right==NULL){//무자식
                 if(target->parent->left==target){
                     target->parent->left=NULL;
+                    checkPoint=target->parent;
+                    index=1;
                     delete target;
+                    doubleBlack();
                 }else if(target->parent->right==target){
                     target->parent->right=NULL;
+                    checkPoint=target->parent;
+                    index=1;
                     delete target;
+                    doubleBlack();
                 }
             }else if(target->right!=NULL&&target->left==NULL){//오른자식
-                cout<<"밥은먹고다니냐\n";
                 if(target->parent->left==target){
                     target->parent->left=target->right;
                     target->right->parent=target->parent;
                     checkPoint=target->right;
+                    if(checkPoint->getColor()==0&&
+                    (
+                        (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                        (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                        checkPoint->left==NULL||
+                        checkPoint->right==NULL
+                    )
+                    ){
+                        index=1;
+                    }
+                    checkPoint->setColor(target->getColor());
+                    // if(checkPoint->getColor()==0){
+                    //     index=0;
+                    // }else if(checkPoint->getColor()==1){
+                    //     index=1;
+                    // }else{
+                    //     cout<<"이 경우는 나올 수 없음.\n";
+                    // }
                     delete target;
+                    if(index==1){
+                        doubleBlack();
+                    }
                 }else if(target->parent->right==target){
-                    cout<<"이 문장이 나와야 함\n";
-                    cout<<"내가 문제다 1\n";
+                    //cout<<"이 문장이 나와야 함\n";
+                    //cout<<"내가 문제다 1\n";
                     target->parent->right=target->right;
-                    cout<<"내가 문제다 2\n";
+                    //cout<<"내가 문제다 2\n";
                     target->right->parent=target->parent;
-                    cout<<"내가 문제다 3\n";
+                    //cout<<"내가 문제다 3\n";
                     checkPoint=target->right;
+                    checkPoint->setColor(target->getColor());
+                    if(checkPoint->getColor()==0&&
+                    (
+                        (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                        (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                        checkPoint->left==NULL||
+                        checkPoint->right==NULL
+                    )
+                    ){
+                        index=1;
+                    }
+                    // if(checkPoint->getColor()==0){
+                    //     index=0;
+                    // }else if(checkPoint->getColor()==1){
+                    //     index=1;
+                    // }else{
+                    //     cout<<"이 경우는 나올 수 없음.\n";
+                    // }
                     delete target;
-                    cout<<"내가 문제다 4\n";
+                    if(index==1){
+                        doubleBlack();
+                     }
+                    //cout<<"내가 문제다 4\n";
                 }
             }else if(target->right==NULL&&target->left!=NULL){//왼자식
                 if(target->parent->left==target){
                     target->parent->left=target->left;
                     target->left->parent=target->parent;
                     checkPoint=target->left;
+                    if(checkPoint->getColor()==0&&
+                    (
+                        (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                        (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                        checkPoint->left==NULL||
+                        checkPoint->right==NULL
+                    )
+                    ){
+                        index=1;
+                    }
+                    checkPoint->setColor(target->getColor());
+                    // if(checkPoint->getColor()==0){
+                    //     index=0;
+                    // }else if(checkPoint->getColor()==1){
+                    //     index=1;
+                    // }else{
+                    //     cout<<"이 경우는 나올 수 없음.\n";
+                    // }
                     delete target;
+                    if(index==1){
+                        doubleBlack();
+                    }
                 }else if(target->parent->right==target){
                     target->parent->right=target->left;
                     target->left->parent=target->parent;
                     checkPoint=target->left;
+                    if(checkPoint->getColor()==0&&
+                    (
+                        (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                        (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                        checkPoint->left==NULL||
+                        checkPoint->right==NULL
+                    )
+                    ){
+                        index=1;
+                    }
+                    checkPoint->setColor(target->getColor());
+                    // if(checkPoint->getColor()==0){
+                    //     index=0;
+                    // }else if(checkPoint->getColor()==1){
+                    //     index=1;
+                    // }else{
+                    //     cout<<"이 경우는 나올 수 없음.\n";
+                    // }
                     delete target;
+                    if(index==1){
+                        doubleBlack();
+                    }
                 }
-
-
-
-
             }else{//둘자식 오른쪽에서 제일 작은거 또는 왼쪽에서 제일 큰거를 삭제당하는 애 자리로
-                cout<<"어디까지 왔나 와드\n";
+                //cout<<"어디까지 왔나 와드\n";
                 smallNumber=target;//왼쪽에서 제일 큰거
                 if(smallNumber->left!=NULL){//그래도 타겟보다 작으니까 스몰넘버임
                     smallNumber=smallNumber->left;
@@ -698,116 +937,282 @@ class node{
                     cout<<smallNumber->getData()<<" "<<smallNumber->getColor()<<" "<<"작은거중에 제일큰거 구함\n";
                     cout<<"numberSmall은 "<<numberSmall<<"임\n";
                 }
-                bigNumber=target;//오른쪽에서 제일 작은거
-                if(bigNumber->right!=NULL){//그래도 타겟보다 크므로 빅넘버임
-                    bigNumber=bigNumber->right;
-                    numberBig++;
-                    while(bigNumber->left!=NULL){
-                        bigNumber=bigNumber->left;
-                        numberBig++;
-                    }
-                    cout<<bigNumber->getData()<<" "<<bigNumber->getColor()<<" "<<"큰거중에 제일 작은거 구함\n";
-                    cout<<"numberBig은 "<<numberBig<<"임\n";
-                }//여기까지는 돌아가는데 문제가 없음 
+                // bigNumber=target;//오른쪽에서 제일 작은거
+                // if(bigNumber->right!=NULL){//그래도 타겟보다 크므로 빅넘버임
+                //     bigNumber=bigNumber->right;
+                //     numberBig++;
+                //     while(bigNumber->left!=NULL){
+                //         bigNumber=bigNumber->left;
+                //         numberBig++;
+                //     }
+                //     cout<<bigNumber->getData()<<" "<<bigNumber->getColor()<<" "<<"큰거중에 제일 작은거 구함\n";
+                //     cout<<"numberBig은 "<<numberBig<<"임\n";
+                // }//여기까지는 돌아가는데 문제가 없음 
 
-                if(numberBig>=numberSmall){//오른쪽에서 제일 작은게 더 깊게 있는거임 혹은 같은거임
-                    if(target->parent->left==target){//1
-                        if(numberBig==1){
-                            bigNumber->left=target->left;
-                            target->left->parent=bigNumber;
-                            bigNumber->parent=target->parent;
-                            target->parent->left=bigNumber;
-                            delete target;
-                        }else{
-                            bigNumber->parent->left=NULL;
-                            bigNumber->parent=target->parent;
-                            target->parent->left=bigNumber;
-                            bigNumber->left=target->left;
-                            target->left->parent=bigNumber;
-                            bigNumber->right=target->right;
-                            target->right->parent=bigNumber;
-                            delete target;
-                        }
-                    }else if(target->parent->right==target){//2
-                        if(numberBig==1){
-                            cout<<"어디까지 왔나 와드1\n";
-                            bigNumber->left=target->left;
-                            cout<<"어디까지 왔나 와드2\n";
-                            target->left->parent=bigNumber;
-                            cout<<"어디까지 왔나 와드3\n";
-                            bigNumber->parent=target->parent;
-                            cout<<"어디까지 왔나 와드4\n";
-                            target->parent->right=bigNumber;
-                            cout<<"어디까지 왔나 와드5\n";
-                            cout<<"타겟자리 차지하는 노드는 "<<bigNumber->getData()<<"에 "<<bigNumber->getColor()<<"색임\n";
-                            delete target;
-                        }else{
-                            bigNumber->parent->left=NULL;
-                            bigNumber->parent=target->parent;
-                            target->parent->right=bigNumber;
-                            bigNumber->left=target->left;
-                            target->left->parent=bigNumber;
-                            bigNumber->right=target->right;
-                            target->right->parent=bigNumber;
-                            delete target;
-                            //cout<<"어디까지 왔나 와드\n";
-                        }
-                    }else{
-                        cout<<"나올수없는경우임\n";
+                // //if(numberBig>=numberSmall){//오른쪽에서 제일 작은게 더 깊게 있는거임 혹은 같은거임
+                //     checkPoint=bigNumber;
+                //     // if(checkPoint->getColor()==0){
+                //     //     index=0;
+                //     // }else if(checkPoint->getColor()==1){
+                //     //     index=1;
+                //     // }else{
+                //     //     cout<<"이 경우는 나올 수 없음.\n";
+                //     // }
+                //     cout<<"자식이 두갠데 움직이는 노드는 "<<bigNumber->getData()<<"에 "<<bigNumber->getColor()<<"색임\n";
+                //     if(target->parent->left==target){//1
+                //         if(numberBig==1){
+                //             bigNumber->left=target->left;
+                //             target->left->parent=bigNumber;
+                //             bigNumber->parent=target->parent;
+                //             target->parent->left=bigNumber;       
+                //             delete target;
+                //         }else{
+                //             bigNumber->parent->left=NULL;
+                //             bigNumber->parent=target->parent;
+                //             target->parent->left=bigNumber;
+                //             bigNumber->left=target->left;
+                //             target->left->parent=bigNumber;
+                //             bigNumber->right=target->right;
+                //             target->right->parent=bigNumber;
+                //             delete target;
+                //         }
+                //     }else if(target->parent->right==target){//2
+                //         if(numberBig==1){
+                //             bigNumber->left=target->left;
+                //             target->left->parent=bigNumber;
+                //             bigNumber->parent=target->parent;
+                //             target->parent->right=bigNumber;
+                //             //cout<<"타겟자리 차지하는 노드는 "<<bigNumber->getData()<<"에 "<<bigNumber->getColor()<<"색임\n";
+                //             delete target;
+                //         }else{
+                //             bigNumber->parent->left=NULL;
+                //             bigNumber->parent=target->parent;
+                //             target->parent->right=bigNumber;
+                //             bigNumber->left=target->left;
+                //             target->left->parent=bigNumber;
+                //             bigNumber->right=target->right;
+                //             target->right->parent=bigNumber;
+                //             delete target;
+                //             //cout<<"어디까지 왔나 와드\n";
+                //         }
+                //     }else{
+                //         cout<<"나올수없는경우임\n";
+                //     }
+                //}
+                 //else 
+                 if(numberBig<numberSmall){//왼쪽에서 제일 큰게 더 깊게있는거임
+                     checkPoint=smallNumber;
+                    //  if(checkPoint->getColor()==0){
+                    //      index=0;
+                    //  }else if(checkPoint->getColor()==1){
+                    //      index=1;
+                    //  }else{
+                    //      cout<<"이 경우는 나올 수 없음.\n";
+                    //  }
+                     //cout<<"자식이 두갠데 움직이는 노드는 "<<bigNumber->getData()<<"에 "<<bigNumber->getColor()<<"색임\n";
+                     if(target->parent->left==target){//3
+                         if(numberSmall==1){
+                             smallNumber->right=target->right;
+                             target->right->parent=smallNumber;
+                             target->parent->left=smallNumber;
+                             smallNumber->parent=target->parent;
+                    if(checkPoint->getColor()==0&&
+                    (
+                        (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                        (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                        checkPoint->left==NULL||
+                        checkPoint->right==NULL
+                    )
+                    ){
+                        index=1;
                     }
-                }else if(numberBig<numberSmall){//왼쪽에서 제일 큰게 더 깊게있는거임
-                    if(target->parent->left==target){//3
-                        if(numberSmall==1){
-                            smallNumber->right=target->right;
-                            target->right->parent=smallNumber;
-                            target->parent->left=smallNumber;
-                            smallNumber->parent=target->parent;
-                            delete target;
-                            cout<<"어디까지 왔나 와드\n";
-                        }else{
-                            smallNumber->parent->right=NULL;
-                            smallNumber->parent=target->parent;
-                            smallNumber->left=target->left;
-                            target->left->parent=smallNumber;
-                            smallNumber->right=target->right;
-                            target->right->parent=smallNumber;
-                            target->parent->left=smallNumber;
-                            delete target;
-                            cout<<"어디까지 왔나 와드\n";
-                        }
-                    }else if(target->parent->right==target){//4
-                        if(numberSmall==1){
-                            smallNumber->parent=target->parent;
+                             checkPoint->setColor(target->getColor());
+                             delete target;
+                            if(index==1){
+                                doubleBlack();
+                             }
+                             //cout<<"어디까지 왔나 와드\n";
+                         }else{
+                             smallNumber->parent->right=NULL;
+                             smallNumber->parent=target->parent;
+                             smallNumber->left=target->left;
+                             target->left->parent=smallNumber;
+                             smallNumber->right=target->right;
+                             target->right->parent=smallNumber;
+                             target->parent->left=smallNumber;
+                            if(checkPoint->getColor()==0&&
+                            (
+                                (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                                (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                                checkPoint->left==NULL||
+                                checkPoint->right==NULL
+                            )
+                            ){
+                                index=1;
+                            }
+                             checkPoint->setColor(target->getColor());
+                             delete target;
+                            if(index==1){
+                                doubleBlack();
+                             }
+                             //cout<<"어디까지 왔나 와드\n";
+                         }
+                     }else if(target->parent->right==target){//4
+                         if(numberSmall==1){
+                             smallNumber->parent=target->parent;
                             target->parent->right=smallNumber;
-                            smallNumber->right=target->right;
-                            target->right->parent=smallNumber;
-                            delete target;
-                            cout<<"어디까지 왔나 와드\n";
-                        }else{
-                            smallNumber->parent->right=NULL;
-                            smallNumber->parent=target->parent;
-                            target->parent->right=smallNumber;
-                            smallNumber->left=target->left;
-                            smallNumber->right=target->right;
-                            target->right->parent=smallNumber;
-                            target->left->parent=smallNumber;
-                            delete target;
-                            cout<<"어디까지 왔나 와드\n";
-                        }
-                    }else{
-                        cout<<"나올수없는경우임\n";
+                             smallNumber->right=target->right;
+                             target->right->parent=smallNumber;
+                            if(checkPoint->getColor()==0&&
+                            (
+                                (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                                (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                                checkPoint->left==NULL||
+                                checkPoint->right==NULL
+                            )
+                            ){
+                                index=1;
+                            }
+                             checkPoint->setColor(target->getColor());
+                             delete target;
+                            if(index==1){
+                                doubleBlack();
+                             }
+                             //cout<<"어디까지 왔나 와드\n";
+                         }else{
+                             smallNumber->parent->right=NULL;
+                             smallNumber->parent=target->parent;
+                             target->parent->right=smallNumber;
+                             smallNumber->left=target->left;
+                             smallNumber->right=target->right;
+                             target->right->parent=smallNumber;
+                             target->left->parent=smallNumber;
+                            if(checkPoint->getColor()==0&&
+                            (
+                                (checkPoint->left!=NULL&&checkPoint->left->getColor()==0)||
+                               (checkPoint->right!=NULL&&checkPoint->right->getColor()==0)||
+                                checkPoint->left==NULL||
+                                checkPoint->right==NULL
+                            )
+                            ){
+                                index=1;
+                            }
+                             checkPoint->setColor(target->getColor());
+                             delete target;
+                             if(index==1){
+                                doubleBlack();
+                             }
+                             //cout<<"어디까지 왔나 와드\n";
+                         }
+                     }else{
+                    cout<<"나올수없는경우임\n";
                     }
-                }else{
+                }
+                else{
                     cout<<"나올 수 없는 경우임 이거 나오면 안됨\n";
                 }
-
-
-
             }
-            //여기에서 더블레드 확인해야함
 
-            //1차시도 실패
 
+                //여기서 더블레드 확인하면 됨. 아니면 제일큰거 제일작은거 있는 그 부분 가서 코드 두개 따로 만들어도 됨.
+                //index를따로 주는것도 괜찮을듯? small이면 1, big이면 0 이런식으로 줘가지고
+                //인덱스 따로 주는게 코드 한번만 짜도 되겠다
+            
+
+
+
+                // while(checkPoint!=NULL){
+            //     if(index==0){//움직인 노드의 색이 검정임
+            //         cout<<"움직인 노드의 색깔이 검정입니다. 경우의 수를 확인합니다. \n";
+            //         // if(checkPoint->parent->left==checkPoint){
+            //         //     if(checkPoint->parent->right!=NULL&&checkPoint->parent->right->getColor()==1){
+            //         //         cout<<"경우의 수 1 형제가 red\n";
+            //         //         break;
+            //         //     }else if((checkPoint->parent->right!=NULL&&checkPoint->parent->right->getColor()==0)&&
+            //         //             ((checkPoint->parent->right->left!=NULL&&checkPoint->parent->right->left->getColor()==0)||
+            //         //             checkPoint->parent->right->left==NULL)&&
+            //         //             ((checkPoint->parent->right->right!=NULL&&checkPoint->parent->right->right->getColor()==0)||
+            //         //             checkPoint->parent->right->right==NULL)
+            //         //             ){
+            //         //         cout<<"경우의 수 2 형제가 블랙 형제 자식도 블랙\n";
+            //         //         break;
+            //         //     }else if((checkPoint->parent->right!=NULL&&checkPoint->parent->right->getColor()==0)&&
+            //         //             (checkPoint->parent->right->left!=NULL&&checkPoint->parent->right->left->getColor()==1)&&
+            //         //             ((checkPoint->parent->right->right!=NULL&&checkPoint->parent->right->right->getColor()==0)||
+            //         //             checkPoint->parent->right->right==NULL)
+            //         //             ){
+            //         //         cout<<"경우의 수 3 형제가 블랙 형제 자식 왼쪽 블랙 오른쪽 레드\n";
+            //         //         break;
+            //         //     }else if((checkPoint->parent->right!=NULL&&checkPoint->parent->right->getColor()==0)&&
+            //         //             (checkPoint->parent->right->right!=NULL&&checkPoint->parent->right->right->getColor()==1)
+            //         //             ){
+            //         //         cout<<"경우의 수 4 형제가 블랙 형제 자식 오른쪽 레드\n";
+            //         //         break;
+            //         //     }
+            //         // }else if(checkPoint->parent->right==checkPoint){
+            //         //     if(checkPoint->parent->left!=NULL&&checkPoint->parent->left->getColor()==1){
+            //         //         cout<<"경우의 수 1 형제가 red\n";
+            //         //     }else if((checkPoint->parent->left!=NULL&&checkPoint->parent->left->getColor()==0)&&
+            //         //             ((checkPoint->parent->left->left!=NULL&&checkPoint->parent->left->left->getColor()==0)||
+            //         //             checkPoint->parent->left->left==NULL)&&
+            //         //             ((checkPoint->parent->left->right!=NULL&&checkPoint->parent->left->right->getColor()==0)||
+            //         //             checkPoint->parent->left->right==NULL)
+            //         //             ){
+            //         //         cout<<"경우의 수 2 형제가 블랙 형제 자식도 블랙\n";
+            //         //         break;
+            //         //     }else if((checkPoint->parent->left!=NULL&&checkPoint->parent->left->getColor()==0)&&
+            //         //             (checkPoint->parent->left->left!=NULL&&checkPoint->parent->left->left->getColor()==1)&&
+            //         //             ((checkPoint->parent->left->right!=NULL&&checkPoint->parent->left->right->getColor()==0)||
+            //         //             checkPoint->parent->left->right==NULL)
+            //         //             ){
+            //         //         cout<<"경우의 수 3 형제가 블랙 형제 자식 왼쪽 레드 오른쪽 블랙\n";
+            //         //         break;
+            //         //     }else if((checkPoint->parent->left!=NULL&&checkPoint->parent->left->getColor()==0)&&
+            //         //             (checkPoint->parent->left->right!=NULL&&checkPoint->parent->left->right->getColor()==1)
+            //         //             ){
+            //         //         cout<<"경우의 수 4 형제가 블랙 형제 자식 오른쪽 레드\n";
+            //         //         break;
+            //         //     }
+            //         // }
+            //         else{
+            //             cout<<"나올수없는경우임\n";
+            //         }
+            //     }else if(index==1){//움직인 노드의 색이 빨강임
+            //         cout<<"움직인 노드의 색깔이 빨강입니다. 검정을 칠해줍니다. \n";
+            //         checkPoint->setColor(0);
+            //         break;
+            //     }else if(index==2){//가져오는 노드가 없음(자식없는노드삭제)(걍 검정색 가져오는건데 따로 뽑아서 만들거임)
+            //         cout<<"자식이 없는 상황임. 부모 노드를 가져왔음. \n";
+            //         break;
+            //     }
+            // }
+            // if(index==1){//bigNumber가 타겟의 자리를 차지한 경우
+            //     if(bigNumber->getColor()==1){//빅넘버의 색이 빨강일 때
+            //         bigNumber->setColor(0);
+            //     }else if(bigNumber->getColor()==0){//빅넘버의 색이 검정일 때
+            //         cout<<"이제 여기를 만들어보자 1\n";
+            //     }else{
+            //         cout<<"나올수 없는 경우임";
+            //     }
+            // }else if(index==0){//smallNumber가 타겟의 자리를 차지한 경우
+            //     if(smallNumber->getColor()==1){//스몰넘버의 색이 빨강일때
+            //         smallNumber->setColor(0);
+            //     }else if(smallNumber->getColor()==0){//스몰넘버의 색이 검정일 때
+            //         cout<<"이제 여기를 만들어보자 2\n";
+            //     }else{
+            //         cout<<"나올수 없는 경우임";
+            //     }
+            // }else if(index==2){//자식이 한개라서 대체노드가 그냥 올라왔는데
+            //     if(checkPoint->getColor()==1){//대체노드 색이 빨강일때
+            //         checkPoint->setColor(0);
+            //     }else if(checkPoint->getColor()==0){//대체노드 색이 검정일때
+            //         cout<<"이제 여기를 만들어보자 3\n";
+            //     }else{
+            //         cout<<"나올수 없는 경우임";
+            //     }
+            // }else{
+            //     cout<<"나오면 안되는 경우임.\n";
+            // }
             // while(1){
             //     if(checkPoint->getColor()==1&&checkPoint->parent->getColor()==1){//더블레드라면
             //         kid=checkPoint;
@@ -880,10 +1285,8 @@ class node{
             //         }
             //     }
             // }
-            
-            //2차시도
-
-
+        
+        
         }else{
             cout<<"그런거없음\n";
         }

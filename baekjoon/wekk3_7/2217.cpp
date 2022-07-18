@@ -1,62 +1,36 @@
-//근데이거어캐함?
-
+//로프문제
+//이거이렇게풀면안될거같은데
+//이거 그리디래
 #include<iostream>
 using namespace std;
-class node{
+class Rope{
     public:
-    int data;
-    node *left, *right;
+    int length;
 };
-void postOrder(node* head){
-    if(head!=NULL){
-        postOrder(head->left);
-        postOrder(head->right);
-        cout<<head->data<<"\n";
-    }
-}
 int main(void){
-    int number=0;
-    int i=0;
-    node *nodes=NULL;
-    node *head=NULL;
-    node *finder=NULL;
-    while(cin>>number){
+    int numberOfRope=0;
+    int ropeLength=0;
+    int maxLength=0;
+    int smallLength=0;
+    Rope *rope[100000];
+    cin>>numberOfRope;
+    for(int i=0;i<numberOfRope;i++){
+        rope[i]=new Rope;
+        cin>>ropeLength;
+        rope[i]->length=ropeLength;
+    }
+    for(int i=0;i<numberOfRope;i++){
         if(i==0){
-            nodes=new node;
-            head=nodes;
-            finder=head;
-            nodes->data=number;
-            i++;
+            smallLength=rope[i]->length;
         }else{
-            nodes=new node;
-            nodes->data=number;
-            finder=head;
-            while(1){
-                if(finder->data<nodes->data){
-                    if(finder->right==NULL){
-                        finder->right=nodes;
-                        cout<<"오른쪽에 붙음\n";
-                        break;
-                    }else{
-                        finder=finder->right;
-                        cout<<"오른쪽으로 감\n";
-                    }
-                }else if(finder->data>nodes->data){
-                    if(finder->left==NULL){
-                        finder->left=nodes;
-                        cout<<"왼쪽에 붙음\n";
-                        break;
-                    }else{
-                        finder=finder->left;
-                        cout<<"왼쪽으로 감\n";
-                    }
-                }else{
-                    cout<<"같은거 넣으면 안됨\n";
-                    delete nodes;
-                    break;
-                }
+            if(smallLength>rope[i]->length){
+                smallLength=rope[i]->length;
             }
         }
+        maxLength=(i+1)*smallLength;
+        if(rope[i]->length>maxLength){
+            maxLength=maxLength;
+        }
     }
-    postOrder(head);
+    cout<<maxLength;
 }

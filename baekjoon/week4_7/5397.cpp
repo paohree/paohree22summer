@@ -59,11 +59,11 @@ int main(void){
     int number=0;
     Answer *answer[1000];
     string before;
-    cout<<"enter number\n";
+    //cout<<"enter number\n";
     cin>>number;
     for(int i=0;i<number;i++){
         answer[i]=new Answer;
-        cout<<"enter sentence\n";
+        //cout<<"enter sentence\n";
         cin>>before;
         before=checkcheck(before);
         answer[i]->answer=before;

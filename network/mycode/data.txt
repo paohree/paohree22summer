@@ -1,0 +1,7 @@
+Pohang	110000
+Pohang Cafe	22000
+Pohang Restaurant	202020
+Pohang Weather	30546
+Pohang Hotel	13484
+Pohang Home	102938
+Pohang School	575757

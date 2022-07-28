@@ -5,18 +5,18 @@
 #include<queue>
 #define green "\033[32m"
 #define normal "\033[0m"
-using namespace std;
+//using namespace std;
 class node{
     public:
     char key;
-    string data;
+    std::string data;
     int searchNumber;
     node *child[27];//띄어쓰기까지 하면 27개임
 };
 struct box{
     int searchNumber;
-    string data;
-    box(int number, string datas){
+    std::string data;
+    box(int number, std::string datas){
         searchNumber=number;
         data=datas;
     }
@@ -24,7 +24,7 @@ struct box{
         return this->searchNumber<b.searchNumber;
     }
 };
-priority_queue<box>pq;
+std::priority_queue<box>pq;
 void inorder (node *pointer){
     if (pointer){
         //cout << pointer->data<<" "<<pointer->searchNumber<<"\n";
@@ -47,7 +47,7 @@ void findWord(node *pointer, char wantuser[]){
     }
 }
 
-void setSearchNumber(node *pointer, string word,int searchNumber){
+void setSearchNumber(node *pointer, std::string word,int searchNumber){
     if(pointer->data==word){
         pointer->searchNumber=searchNumber;
         //cout<<"다음과 같이 검색횟수가 설정됨\n";
@@ -83,14 +83,14 @@ node *MakeTrie(node *pointer,char alphabet){
 int main(void){
     node *head=new node;
     node *set=new node;
-    string sentence;
-    string dummy;
+    std::string sentence;
+    std::string dummy;
     int searchNumber;
-    ifstream file;
+    std::ifstream file;
     int space;
     file.open("data.txt");
     if(file.is_open()){//데이터구조 만들고 검색횟수까지 넣어줌 ㅇㅇ
-        while(getline(file,sentence,'\t')){
+        while(std::getline(file,sentence,'\t')){
             file>>searchNumber;
             set=head;
             //cout<<sentence<<"\n";
@@ -124,7 +124,7 @@ int main(void){
         c=getchar();
         if(c==27){
             system("stty cooked");//system from 아는 형
-            cout<<"장비를 정지합니다.\n";
+            std::cout<<"장비를 정지합니다.\n";
             exit(0);
         }else{
             system("stty cooked");
@@ -155,7 +155,7 @@ int main(void){
             if(userWant[i]=='0'){
                 break;
             }else{
-                cout<<userWant[i];
+                std::cout<<userWant[i];
             }
         }
         int k=2;
@@ -170,7 +170,7 @@ int main(void){
                 box b=pq.top();
                 pq.pop();
                 k++;
-                cout<<b.data<<" "<<b.searchNumber<<"\n";
+                std::cout<<b.data<<" "<<b.searchNumber<<"\n";
             }
             printf("\x1b[%dA",k);
         }
